@@ -1,5 +1,10 @@
-import 'package:clinicease/screen/login_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:clinicease/services/auth_services.dart';
+import 'package:clinicease/models/user_model.dart';
+import 'package:clinicease/screen/login_screen.dart';
+import 'package:uuid/uuid.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -18,6 +23,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _passwordController = TextEditingController();
   DateTime _selectedBirthdate = DateTime.now();
   String? _selectedGender;
+
+  AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -124,10 +131,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 });
               },
             ),
+
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Implement registration logic here
+              onPressed: () async {
+              // Generate a unique ID for the user
+              String userId = Uuid().v4();
+
+              // Call registration logic here
+              var userModel = UserModel(
+                id: userId, // Use the generated ID for the user
+                fullName: _fullNameController.text,
+                identificationNumber: _identificationController.text,
+                phoneNumber: _phoneNumberController.text,
+                email: _emailController.text,
+                password: _passwordController.text,
+                birthdate: _selectedBirthdate,
+                gender: _selectedGender ?? '',
+              );
+
+              User? user = await _authService.registerWithEmailAndPassword(userModel);
+              if (user != null) {
+                // Registration successful, store user data in Firestore
+                try {
+                  await FirebaseFirestore.instance.collection('users').doc(userId).set({
+                    'fullName': userModel.fullName,
+                    'identificationNumber': userModel.identificationNumber,
+                    'phoneNumber': userModel.phoneNumber,
+                    'email': userModel.email,
+                    'birthdate': userModel.birthdate,
+                    'gender': userModel.gender,
+                  });
+                  // Navigate to the login screen
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+                  );
+                } catch (e) {
+                  print('Error storing user data: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error storing user data. Please try again.'),
+                      duration: Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  } else {
+                    // Registration failed, handle error accordingly
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Registration failed. Please try again.'),
+                        duration: Duration(seconds: 3),
+                  ),
+                );
+              }
               },
               style: ElevatedButton.styleFrom(textStyle: _textStyle),
               child: Text("Register"),
@@ -136,13 +192,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
-               MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+                  MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
                 );
               },
               child: Text(
                 "Return to Login",
                 style: _textStyle,
-             ),
+              ),
             ),
           ],
         ),
@@ -150,7 +206,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-   Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedBirthdate,
@@ -163,7 +219,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
   }
 }
-
-
-
-
