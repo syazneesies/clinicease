@@ -1,4 +1,5 @@
 import 'package:clinicease/screen/my_profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -8,6 +9,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     String userUID = 'userUID'; 
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -86,9 +89,13 @@ class HomeScreen extends StatelessWidget {
                 style: _textStyle,
               ),
               onTap: () {
-                Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (BuildContext context) => MyProfileScreen()),
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  String userUID = user.uid;
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (BuildContext context) => MyProfileScreen(userUID: userUID)),
                 );
+              }
               },
             ),
             ListTile(
@@ -126,6 +133,7 @@ class DisplayCardWidget extends StatelessWidget {
         children: [
           Text(
             'My Rewards',
+            
             style:_textStyle.copyWith( // Use _textStyle
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -161,7 +169,7 @@ class MenuCategoriesWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              fontFamily: 'PoppinsRegular', // Use Poppins font
+              fontFamily: 'PoppinsRegular', 
             ),
           ),
         ),

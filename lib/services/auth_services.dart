@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:clinicease/models/user_model.dart';
 
-
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -23,16 +22,15 @@ class AuthService {
   }
 
   // Register with email and password
-  Future<User?> registerWithEmailAndPassword(UserModel user) async {
+  Future<String?> registerWithEmailAndPassword(UserModel userModel) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: user.email,
-        password: user.password,
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: userModel.email,
+        password: userModel.password,
       );
-      User? firebaseUser = result.user;
-      return firebaseUser;
-    } catch (error) {
-      print(error.toString());
+      return userCredential.user?.uid;
+    } catch (e) {
+      print('Error registering user: $e');
       return null;
     }
   }
@@ -47,7 +45,6 @@ class AuthService {
         'email': user.email,
         'birthdate': user.birthdate,
         'gender': user.gender,
-        
       });
     } catch (error) {
       print('Error storing user data: $error');
@@ -58,5 +55,28 @@ class AuthService {
   // Sign out
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  
+
+  // Retrieve user data from Firestore
+  Future<UserModel?> getUserData(String userUID) async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection('users').doc(userUID).get();
+
+      if (documentSnapshot.exists) {
+        // User data found, parse it into UserModel
+        Map<String, dynamic> userData = documentSnapshot.data() as Map<String, dynamic>;
+        return UserModel.fromJson(userData);
+      } else {
+        // User data not found
+        return null;
+      }
+    } catch (e) {
+      // Error occurred while fetching user data
+      print("Error fetching user data: $e");
+      return null;
+    }
   }
 }

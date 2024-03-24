@@ -134,60 +134,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () async {
-              // Generate a unique ID for the user
-              String userId = Uuid().v4();
+  onPressed: () async {
+    // Call registration logic here
+    var userModel = UserModel(
+      id: '', // We will set this after obtaining the UID from Firebase
+      fullName: _fullNameController.text,
+      identificationNumber: _identificationController.text,
+      phoneNumber: _phoneNumberController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
+      birthdate: _selectedBirthdate,
+      gender: _selectedGender ?? '',
+    );
 
-              // Call registration logic here
-              var userModel = UserModel(
-                id: userId, // Use the generated ID for the user
-                fullName: _fullNameController.text,
-                identificationNumber: _identificationController.text,
-                phoneNumber: _phoneNumberController.text,
-                email: _emailController.text,
-                password: _passwordController.text,
-                birthdate: _selectedBirthdate,
-                gender: _selectedGender ?? '',
-              );
+    // Register the user and get the UID from AuthService
+    String? userId = await _authService.registerWithEmailAndPassword(userModel);
+    if (userId != null) {
+      // Set the obtained UID to userModel
+      userModel = userModel.copyWith(id: userId);
 
-              User? user = await _authService.registerWithEmailAndPassword(userModel);
-              if (user != null) {
-                // Registration successful, store user data in Firestore
-                try {
-                  await FirebaseFirestore.instance.collection('users').doc(userId).set({
-                    'fullName': userModel.fullName,
-                    'identificationNumber': userModel.identificationNumber,
-                    'phoneNumber': userModel.phoneNumber,
-                    'email': userModel.email,
-                    'birthdate': userModel.birthdate,
-                    'gender': userModel.gender,
-                  });
-                  // Navigate to the login screen
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+      // Registration successful, store user data in Firestore
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(userId).set({
+          'fullName': userModel.fullName,
+          'identificationNumber': userModel.identificationNumber,
+          'phoneNumber': userModel.phoneNumber,
+          'email': userModel.email,
+          'birthdate': userModel.birthdate,
+          'gender': userModel.gender,
+        });
+        // Navigate to the login screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+        );
+      } catch (e) {
+        print('Error storing user data: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error storing user data. Please try again.'),
+            duration: Duration(seconds: 3),
+                    ),
                   );
-                } catch (e) {
-                  print('Error storing user data: $e');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error storing user data. Please try again.'),
-                      duration: Duration(seconds: 3),
-                        ),
-                      );
-                    }
-                  } else {
-                    // Registration failed, handle error accordingly
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Registration failed. Please try again.'),
-                        duration: Duration(seconds: 3),
+                }
+              } else {
+                // Registration failed, handle error accordingly
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Registration failed. Please try again.'),
+                    duration: Duration(seconds: 3),
                   ),
                 );
               }
-              },
-              style: ElevatedButton.styleFrom(textStyle: _textStyle),
-              child: Text("Register"),
-            ),
+            },
+            style: ElevatedButton.styleFrom(textStyle: _textStyle),
+            child: Text("Register"),
+          ),
 
             TextButton(
               onPressed: () {

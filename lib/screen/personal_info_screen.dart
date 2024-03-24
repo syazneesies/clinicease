@@ -1,71 +1,67 @@
-// import 'package:flutter/material.dart';
-// import '../models/user_model.dart'; // Import the model
+import 'package:clinicease/services/auth_services.dart';
+import 'package:flutter/material.dart';
+import 'package:clinicease/models/user_model.dart';
 
-// class ProfilePage extends StatelessWidget {
-//   final Profile profile; // Use the Profile model here
+class PersonalInfoScreen extends StatefulWidget {
+  final String userId;
 
-//   ProfilePage({required this.profile});
+  const PersonalInfoScreen({Key? key, required this.userId}) : super(key: key);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('My Profile')),
-//       body: Padding(
-//         padding: const EdgeInsets.all(20.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(
-//               'Profile Details',
-//               style: TextStyle(
-//                 fontSize: 24,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//             ProfileDetailRow(label: 'Full Name', value: profile.fullName),
-//             ProfileDetailRow(label: 'Birthdate', value: profile.birthdate.toString()),
-//             ProfileDetailRow(label: 'Identification Number', value: profile.identificationNumber),
-//             ProfileDetailRow(label: 'Phone Number', value: profile.phoneNumber),
-//             ProfileDetailRow(label: 'Email', value: profile.email),
-//             ProfileDetailRow(label: 'Gender', value: profile.gender),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  _PersonalInfoScreenState createState() => _PersonalInfoScreenState();
+}
 
-// class ProfileDetailRow extends StatelessWidget {
-//   final String label;
-//   final String value;
+class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
+  late Future<UserModel?> _userDataFuture;
+  final AuthService _authService = AuthService();
 
-//   ProfileDetailRow({required this.label, required this.value});
+  @override
+  void initState() {
+    super.initState();
+    _userDataFuture = _authService.getUserData(widget.userId);
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 10),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Expanded(
-//             flex: 1,
-//             child: Text(
-//               label,
-//               style: TextStyle(
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//           ),
-//           SizedBox(width: 20),
-//           Expanded(
-//             flex: 2,
-//             child: Text(value),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
+      body: FutureBuilder<UserModel?>(
+        future: _userDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final user = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Full Name: ${user.fullName}'),
+                  Text('Identification Number: ${user.identificationNumber}'),
+                  Text('Phone Number: ${user.phoneNumber}'),
+                  Text('Email: ${user.email}'),
+                  Text('Birthday: ${user.birthdate.toString()}'),
+                  Text('Gender: ${user.gender}'),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Navigate to edit profile page
+                    },
+                    child: Text('Edit Profile'),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Center(child: Text('No user data found'));
+          }
+        },
+      ),
+    );
+  }
+}

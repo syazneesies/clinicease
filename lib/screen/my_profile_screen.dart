@@ -1,7 +1,11 @@
 import 'package:clinicease/screen/home_screen.dart';
+import 'package:clinicease/screen/personal_info_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyProfileScreen extends StatelessWidget {
+  final String userUID;
+  MyProfileScreen({required this.userUID});
+
   TextStyle _textStyle = TextStyle(
     fontFamily: 'PoppinsRegular',
   );
@@ -41,8 +45,16 @@ class MyProfileScreen extends StatelessWidget {
             ),
             child: ListTile(
               onTap: () {
-                // Handle Personal Information onTap
-              },
+              if (userUID != null) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => PersonalInfoScreen(userId: userUID)),
+                );
+              } else {
+                // Handle the case where userUID is null, perhaps by showing an error message
+                print('User ID is null');
+              }
+            },
               title: Text(
                 'Personal Information',
                 style: _textStyle,
@@ -61,7 +73,7 @@ class MyProfileScreen extends StatelessWidget {
                 // Handle My Rewards onTap
               },
               title: Text(
-                'My Rewards',
+                'User UID: $userUID',
                 style: _textStyle,
               ),
               trailing: Icon(Icons.arrow_forward_ios),

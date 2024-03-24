@@ -100,7 +100,7 @@ class LoginScreen extends StatelessWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF202050), // Set the button's background color
+                    backgroundColor: Color(0xFF202050), 
                   ),
                   child: Text("Login", style: _textStyle),
                 ),

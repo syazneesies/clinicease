@@ -19,6 +19,29 @@ class UserModel {
     required this.gender,
   });
 
+  // Define copyWith method
+  UserModel copyWith({
+    String? id,
+    String? fullName,
+    String? identificationNumber,
+    String? phoneNumber,
+    String? email,
+    String? password,
+    DateTime? birthdate,
+    String? gender,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      fullName: fullName ?? this.fullName,
+      identificationNumber: identificationNumber ?? this.identificationNumber,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      birthdate: birthdate ?? this.birthdate,
+      gender: gender ?? this.gender,
+    );
+  }
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
