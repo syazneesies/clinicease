@@ -2,8 +2,8 @@
 
 import 'package:clinicease/models/user_model.dart';
 import 'package:clinicease/services/auth_service.dart';
+import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 
 class EditPersonalInfoScreen extends StatefulWidget {
   const EditPersonalInfoScreen({super.key});
@@ -14,13 +14,12 @@ class EditPersonalInfoScreen extends StatefulWidget {
 
 class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
   final AuthService _authService = AuthService();
-  final GetStorage _box = GetStorage();
   String? userId;
 
   @override
   void initState() {
     super.initState();
-    userId = _box.read('uid');
+    userId = StorageService.getUID();
   }
 
   @override
@@ -60,7 +59,6 @@ class EditProfileDataScreen extends StatefulWidget {
 
 class _EditProfileDataScreenState extends State<EditProfileDataScreen> {
   final AuthService _authService = AuthService();
-  final GetStorage _box = GetStorage();
   String? userId;
 
   TextEditingController fullNameController = TextEditingController();
@@ -79,7 +77,7 @@ class _EditProfileDataScreenState extends State<EditProfileDataScreen> {
     emailController.text = widget.user.email!;
     birthdateController.text = widget.user.birthdate.toString();
     genderController.text = widget.user.gender!;
-    userId = _box.read('uid');
+    userId = StorageService.getUID();
 
     if (!mounted) {
       return;

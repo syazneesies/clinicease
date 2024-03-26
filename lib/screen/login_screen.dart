@@ -1,11 +1,12 @@
+import 'package:clinicease/models/user_model.dart';
 import 'package:clinicease/screen/forgot_password_screen.dart';
 import 'package:clinicease/screen/home_screen.dart';
 import 'package:clinicease/screen/sign_up_screen.dart';
 import 'package:clinicease/services/auth_service.dart';
+import 'package:clinicease/services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 
 // Import statements remain the same
 class LoginScreen extends StatefulWidget {
@@ -20,7 +21,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GetStorage box = GetStorage();
 
   @override
   void initState() {
@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _emailController.text = 'tester11@gmail.com';
       _passwordController.text = 'tester123';
     }
+    
     super.initState();
   }
 
@@ -90,6 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text("Forgot Password?"),
                 ),
                 const SizedBox(height: 20),
+                
+                
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -100,15 +103,34 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
 
                       if (user != null) {
+                        // Get user ID
+                        User? user = FirebaseAuth.instance.currentUser;
+                        StorageService.setUID(user!.uid);
+
+                        // Get user data
+                        await _auth.getUserData(user.uid).then((value) {
+                          if (value != null) {
+                            StorageService.setUserData(value);
+                          }
+                        });
+
+                        // Check if userData is successfully stored
+                        UserModel? userData = StorageService.getUserData();
+                        if (userData == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('An error occurred. Please re-login and try again.'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // If userData is not null, navigate to home screen
                         // Navigate to home screen after successful login
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => const HomeScreen()),
                         );
-
-                        User? user = FirebaseAuth.instance.currentUser;
-                        box.write('uid', user!.uid);
-
 
                       } else {
                         // Show error message
@@ -124,6 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text("Login", style: TextStyle(color: Colors.white)),
                 ),
                 const SizedBox(height: 10),
+                
+                // Register button
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(

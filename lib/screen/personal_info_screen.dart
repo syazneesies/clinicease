@@ -1,8 +1,8 @@
 import 'package:clinicease/screen/edit_personal_info_screen.dart';
 import 'package:clinicease/services/auth_service.dart';
+import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/user_model.dart';
-import 'package:get_storage/get_storage.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
@@ -14,13 +14,12 @@ class PersonalInfoScreen extends StatefulWidget {
 class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late Future<UserModel?> _userDataFuture;
   final AuthService _authService = AuthService();
-  final GetStorage _box = GetStorage();
   String? userId;
 
   @override
   void initState() {
     super.initState();
-    userId = _box.read('uid');
+    userId = StorageService.getUID();
     onRefresh();
   }
 

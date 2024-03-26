@@ -1,6 +1,7 @@
+import 'package:clinicease/screen/login_screen.dart';
 import 'package:clinicease/screen/personal_info_screen.dart';
+import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -10,16 +11,11 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
-  // Will delete later, dummy
   String? userUID;
-  final TextStyle _textStyle = const TextStyle(
-    fontFamily: 'PoppinsRegular',
-  );
-  final GetStorage box = GetStorage();
 
   @override
   void initState() {
-    userUID = box.read('uid');
+    userUID = StorageService.getUID();
     setState(() {});
     super.initState();
   }
@@ -50,6 +46,29 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ),
             child: ListTile(
               onTap: () {
+                // Handle My Rewards onTap
+              },
+              title: const Text(
+                'User UID',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                userUID ?? 'No User ID',
+              ),
+            ),
+          ),
+          const SizedBox(height: 20.0),
+
+          
+          Card(
+            elevation: 4.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: ListTile(
+              onTap: () {
               if (userUID != null) {
                 Navigator.push(
                   context,
@@ -65,14 +84,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 );
               }
             },
-              title: Text(
+              title: const Text(
                 'Personal Information',
-                style: _textStyle,
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
             ),
           ),
           const SizedBox(height: 20.0),
+          
           Card(
             elevation: 4.0,
             shape: RoundedRectangleBorder(
@@ -80,28 +99,17 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ),
             child: ListTile(
               onTap: () {
-                // Handle My Rewards onTap
+                // Clear user ID from storage
+                StorageService.clearAll();
+
+                // Navigate to login screen
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
               },
-              title: Text(
-                'User UID: $userUID',
-                style: _textStyle,
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios),
-            ),
-          ),
-          const SizedBox(height: 20.0),
-          Card(
-            elevation: 4.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: ListTile(
-              onTap: () {
-                // Handle Log Out onTap
-              },
-              title: Text(
+              title: const Text(
                 'Log Out',
-                style: _textStyle,
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
             ),

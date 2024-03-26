@@ -1,7 +1,10 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:clinicease/models/user_model.dart';
 import 'package:clinicease/screen/login_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
+import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:flutter/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,12 +14,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GetStorage _box = GetStorage();
+  DateTime now = DateTime.now();
+  UserModel? user;
   String? userId;
+  String? greeting;
 
   @override
   void initState() {
-    userId = _box.read('uid');
+    // Get user ID from storage
+    userId = StorageService.getUID();
+    if (now.hour < 12) {
+      greeting = 'Good Morning';
+    } else if (now.hour < 17) {
+      greeting = 'Good Afternoon';
+    } else {
+      greeting = 'Good Evening';
+    }
+
+    // Get user data from storage
+    user = StorageService.getUserData();
     super.initState();
   }
 
@@ -41,22 +57,27 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
               width: double.infinity, // Make My Rewards banner fill screen width
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: const Color(0xFF6ABAE1), // Background color for My Rewards banner
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.account_circle,
-                    size: 32,
+                    size: 40,
                     color: Color(0xFF202050),
                   ),
-                  SizedBox(width: 8),
-                  Text(
-                    'Welcome back',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: AutoSizeText(
+                      '$greeting, ${user?.fullName ?? 'User'}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      maxLines: 2,
+                      minFontSize: 8,
+                      maxFontSize: 24,
                     ),
                   ),
                 ],
@@ -81,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     color: Colors.white,
-                    fontFamily: 'PoppinsRegular',
                   ),
                 ),
               ),
@@ -116,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onTap: () {
                 // Clear user ID from storage
-                _box.remove('uid');
+                StorageService.clearAll();
 
                 // Navigate to login screen
                 Navigator.of(context).pushAndRemoveUntil(
