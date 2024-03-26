@@ -1,12 +1,18 @@
+import 'package:clinicease/helpers/timestamp_json.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'user_model.g.dart';
+
+@JsonSerializable()
 class UserModel {
-  final String id;
-  final String fullName;
-  final String identificationNumber;
-  final String phoneNumber;
-  final String email;
-  final String password;
-  final DateTime birthdate;
-  final String gender;
+  final String? id;
+  final String? fullName;
+  final String? identificationNumber;
+  final String? phoneNumber;
+  final String? email;
+  @TimestampConverter()
+  final DateTime? birthdate;
+  final String? gender;
 
   UserModel({
     required this.id,
@@ -14,7 +20,6 @@ class UserModel {
     required this.identificationNumber,
     required this.phoneNumber,
     required this.email,
-    required this.password,
     required this.birthdate,
     required this.gender,
   });
@@ -36,22 +41,12 @@ class UserModel {
       identificationNumber: identificationNumber ?? this.identificationNumber,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       email: email ?? this.email,
-      password: password ?? this.password,
       birthdate: birthdate ?? this.birthdate,
       gender: gender ?? this.gender,
     );
   }
-
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['id'],
-      fullName: json['fullName'],
-      identificationNumber: json['identificationNumber'],
-      phoneNumber: json['phoneNumber'],
-      email: json['email'],
-      password: json['password'],
-      birthdate: DateTime.parse(json['birthdate']),
-      gender: json['gender'],
-    );
-  }
+  
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }
+
