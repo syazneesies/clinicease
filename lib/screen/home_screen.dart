@@ -4,7 +4,7 @@ import 'package:clinicease/screen/login_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -242,6 +242,16 @@ class MenuCategoriesWidget extends StatelessWidget {
                     builder: (context) => const MyProfileScreen(),
                   ),
                 );
+              }
+            ),
+            MenuCategoryCard(
+              icon: Icons.call,
+              label: 'Emergency',
+              backgroundColor: Colors.red,
+              onTap: () async {
+                if (!await launchUrl(Uri.parse('tel:+60132152852'))) {
+                  throw Exception('Could not launch URL');
+                }
               }
             ),
           ],
