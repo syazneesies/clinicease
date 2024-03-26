@@ -1,27 +1,39 @@
+import 'package:clinicease/screen/login_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
-class HomeScreen extends StatelessWidget {
-  TextStyle _textStyle = TextStyle(
-    fontFamily: 'PoppinsRegular',
-  );
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GetStorage _box = GetStorage();
+  String? userId;
+
+  @override
+  void initState() {
+    userId = _box.read('uid');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-     String userUID = 'userUID'; 
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'ClinicEase',
           style: TextStyle(
-            fontFamily: 'PoppinsRegular',
+            color: Colors.white,
           ),
         ),
-        backgroundColor: Color(0xFF202050),
+        backgroundColor: const Color(0xFF202050),
         elevation: 4.0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -29,9 +41,9 @@ class HomeScreen extends StatelessWidget {
           children: [
             Container(
               width: double.infinity, // Make My Rewards banner fill screen width
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: Color(0xFF6ABAE1), // Background color for My Rewards banner
-              child: Row(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              color: const Color(0xFF6ABAE1), // Background color for My Rewards banner
+              child: const Row(
                 children: [
                   Icon(
                     Icons.account_circle,
@@ -50,16 +62,19 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            DisplayCardWidget(),
-            SizedBox(height: 20), // Add some space between the cards and menu
-            MenuCategoriesWidget(),
+            const DisplayCardWidget(),
+            const SizedBox(height: 20), // Add some space between the cards and menu
+            const MenuCategoriesWidget(),
           ],
         ),
       ),
-      drawer: Drawer( // Add a drawer for the menu bar
+      drawer: Drawer(
         child: ListView(
           children: [
-            DrawerHeader(
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFF202050),
+              ),
               child: Center(
                 child: Text(
                   'Menu',
@@ -70,41 +85,44 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              decoration: BoxDecoration(
-                color: Color(0xFF202050),
-              ),
             ),
             ListTile(
-              title: Text(
+              title: const Text(
                 'My Transaction History',
-                style: _textStyle,
               ),
               onTap: () {
                 // Add onTap functionality for Transaction History
               },
             ),
             ListTile(
-              title: Text(
+              title: const Text(
                 'My Profile',
-                style: _textStyle,
               ),
               onTap: () {
-                User? user = FirebaseAuth.instance.currentUser;
-                if (user != null) {
-                  String userUID = user.uid;
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) => MyProfileScreen(userUID: userUID)),
+                // Close drawer
+                Navigator.pop(context);
+
+                // Navigate to My Profile screen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => const MyProfileScreen()
+                  )
                 );
-              }
               },
             ),
             ListTile(
-              title: Text(
+              title: const Text(
                 'Log Out',
-                style: _textStyle,
               ),
               onTap: () {
-                // Add onTap functionality for Log Out
+                // Clear user ID from storage
+                _box.remove('uid');
+
+                // Navigate to login screen
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
               },
             ),
           ],
@@ -113,28 +131,26 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
 class DisplayCardWidget extends StatelessWidget {
-   TextStyle _textStyle = TextStyle(
-    fontFamily: 'PoppinsRegular',
-   );
+  const DisplayCardWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Color(0xFF6ABAE1),
+        color: const Color(0xFF6ABAE1),
         borderRadius: BorderRadius.circular(10),
       ),
       
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start, 
         children: [
           Text(
             'My Rewards',
             
-            style:_textStyle.copyWith( // Use _textStyle
+            style: TextStyle( // Use _textStyle
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -144,7 +160,7 @@ class DisplayCardWidget extends StatelessWidget {
           SizedBox(height: 8,),
           Text(
             'Points: 100', // Display rewards points here
-            style: _textStyle.copyWith( // Use _textStyle
+            style: TextStyle( // Use _textStyle
               fontSize: 16,
               color: Colors.white,
             ),
@@ -156,14 +172,16 @@ class DisplayCardWidget extends StatelessWidget {
 }
 
 class MenuCategoriesWidget extends StatelessWidget {
+  const MenuCategoriesWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+        const SizedBox(height: 20),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Menu Categories',
             style: TextStyle(
@@ -173,23 +191,23 @@ class MenuCategoriesWidget extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         GridView.count(
           crossAxisCount: 2, // Two columns
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(), // Disable scroll for GridView
+          physics: const NeverScrollableScrollPhysics(), // Disable scroll for GridView
           children: [
-            MenuCategoryCard(
+            const MenuCategoryCard(
               icon: Icons.calendar_today,
               label: 'Book Appointment',
               backgroundColor: Colors.blue,
             ),
-            MenuCategoryCard(
+            const MenuCategoryCard(
               icon: Icons.shopping_cart,
               label: 'E-Medi Shop',
               backgroundColor: Colors.green,
             ),
-            MenuCategoryCard(
+            const MenuCategoryCard(
               icon: Icons.card_giftcard,
               label: 'Reward Shop',
               backgroundColor: Colors.orange,
@@ -198,6 +216,13 @@ class MenuCategoriesWidget extends StatelessWidget {
               icon: Icons.person,
               label: 'My Profile',
               backgroundColor: Colors.purple,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MyProfileScreen(),
+                  ),
+                );
+              }
             ),
           ],
         ),
@@ -210,11 +235,13 @@ class MenuCategoryCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color backgroundColor;
+  final void Function()? onTap;
 
-  MenuCategoryCard({
+  const MenuCategoryCard({super.key, 
     required this.icon,
     required this.label,
     required this.backgroundColor,
+    this.onTap,
   });
 
   @override
@@ -226,9 +253,7 @@ class MenuCategoryCard extends StatelessWidget {
       ),
       color: backgroundColor,
       child: InkWell(
-        onTap: () {
-          // Add onTap functionality here
-        },
+        onTap: onTap,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -237,10 +262,10 @@ class MenuCategoryCard extends StatelessWidget {
               size: 40,
               color: Colors.white,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -258,7 +283,7 @@ class MenuCategoryItem extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  MenuCategoryItem({required this.icon, required this.label});
+  const MenuCategoryItem({super.key, required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -267,12 +292,12 @@ class MenuCategoryItem extends StatelessWidget {
         Icon(
           icon,
           size: 40,
-          color: Color(0xFF202050),
+          color: const Color(0xFF202050),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
             fontFamily: 'PoppinsRegular',

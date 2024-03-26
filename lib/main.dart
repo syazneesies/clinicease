@@ -1,31 +1,39 @@
 import 'dart:async';
+import 'package:clinicease/firebase_options.dart';
 import 'package:clinicease/screen/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // Add this import
+import 'package:firebase_core/firebase_core.dart';
+import 'package:get_storage/get_storage.dart'; // Add this import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
-  runApp(MyApp());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // Initialize Firebase
+  await GetStorage.init();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Splash Screen',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'PoppinsRegular',
       ),
-      home: Splash2(),
+      home: const Splash2(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class Splash2 extends StatefulWidget {
+  const Splash2({super.key});
+
   @override
-  _Splash2State createState() => _Splash2State();
+  State<Splash2> createState() => _Splash2State();
 }
 
 class _Splash2State extends State<Splash2> {
@@ -36,16 +44,16 @@ class _Splash2State extends State<Splash2> {
   }
 
   void _navigateToLoginScreen() {
-    Timer(Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+        MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
       );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.blue,
       body: Center(
         child: Column(

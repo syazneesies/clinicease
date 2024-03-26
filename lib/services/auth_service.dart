@@ -1,3 +1,4 @@
+import 'package:clinicease/models/auth_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:clinicease/models/user_model.dart';
@@ -22,11 +23,11 @@ class AuthService {
   }
 
   // Register with email and password
-  Future<String?> registerWithEmailAndPassword(UserModel userModel) async {
+  Future<String?> registerWithEmailAndPassword(AuthModel authModel) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: userModel.email,
-        password: userModel.password,
+        email: authModel.email,
+        password: authModel.password,
       );
       return userCredential.user?.uid;
     } catch (e) {
@@ -77,6 +78,25 @@ class AuthService {
       // Error occurred while fetching user data
       print("Error fetching user data: $e");
       return null;
+    }
+  }
+
+  // Store user data in Firestore
+  Future<bool> updateUserData(UserModel user) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.id).update({
+        'fullName': user.fullName,
+        'identificationNumber': user.identificationNumber,
+        'phoneNumber': user.phoneNumber,
+        'email': user.email,
+        'birthdate': user.birthdate,
+        'gender': user.gender,
+      });
+
+      return true;
+    } catch (error) {
+      print('Error storing user data: $error');
+      return false;
     }
   }
 }
