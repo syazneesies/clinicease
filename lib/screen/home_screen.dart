@@ -2,6 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinicease/models/user_model.dart';
 import 'package:clinicease/screen/login_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
+import 'package:clinicease/screen/reward_screen.dart';
+import 'package:clinicease/screen/service_screen.dart';
 import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -84,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const DisplayCardWidget(),
-            const SizedBox(height: 20), // Add some space between the cards and menu
+            const SizedBox(height: 20),
             const MenuCategoriesWidget(),
           ],
         ),
@@ -213,24 +215,38 @@ class MenuCategoriesWidget extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         GridView.count(
-          crossAxisCount: 2, // Two columns
+          crossAxisCount: 2, 
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(), // Disable scroll for GridView
+          physics: const NeverScrollableScrollPhysics(), 
           children: [
-            const MenuCategoryCard(
+            MenuCategoryCard(
               icon: Icons.calendar_today,
               label: 'Book Appointment',
               backgroundColor: Colors.blue,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ServiceScreen(),
+                  ),
+                );
+              },
             ),
             const MenuCategoryCard(
               icon: Icons.shopping_cart,
               label: 'E-Medi Shop',
               backgroundColor: Colors.green,
             ),
-            const MenuCategoryCard(
+            MenuCategoryCard(
               icon: Icons.card_giftcard,
               label: 'Reward Shop',
               backgroundColor: Colors.orange,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RewardScreen(),
+                  ),
+                );
+              },
             ),
             MenuCategoryCard(
               icon: Icons.person,
