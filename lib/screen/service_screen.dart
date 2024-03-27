@@ -2,9 +2,10 @@ import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/service_model.dart';
 import 'package:clinicease/services/services_service.dart';
-//import 'package:clinicease/screens/service_detail_screen.dart';
 
 class ServiceScreen extends StatefulWidget {
+  const ServiceScreen({super.key});
+
   @override
   _ServiceScreenState createState() => _ServiceScreenState();
 }
@@ -16,13 +17,13 @@ class _ServiceScreenState extends State<ServiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Service List'),
+        title: const Text('Service List'),
       ),
       body: FutureBuilder(
         future: _serviceService.getServices(),
-        builder: (context, AsyncSnapshot<List<Service>> snapshot) {
+        builder: (context, AsyncSnapshot<List<ServiceModel>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
@@ -36,22 +37,22 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 final service = snapshot.data![index];
                 return ListTile(
                   leading: Image.network(
-                    service.imageUrl,
+                    service.imageUrl!,
                     width: 50,
                     height: 50,
                   ),
-                  title: Text(service.serviceName),
+                  title: Text(service.serviceName!),
                   subtitle: Text(
                     'Date: ${service.serviceDate.toString()} Quantity: ${service.serviceQuantity.toString()}',
                   ),
                   trailing: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MyProfileScreen(),
+                        builder: (context) => const MyProfileScreen(),
                         //serviceId: service.id
                       ));
                     },
-                    child: Text('Book Now'),
+                    child: const Text('Book Now'),
                   ),
                 );
               },
