@@ -30,7 +30,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <!-- Provide required visibility configuration for API level 30 and above -->
-        <queries>
+    </application>
+     <queries>
         <!-- If your app checks for SMS support -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -45,6 +46,5 @@
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
-        </queries>
-    </application>
+    </queries>
 </manifest>
