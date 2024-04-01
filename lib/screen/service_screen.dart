@@ -7,7 +7,7 @@ class ServiceScreen extends StatefulWidget {
   const ServiceScreen({Key? key}) : super(key: key);
 
   @override
-  _ServiceScreenState createState() => _ServiceScreenState();
+  State<ServiceScreen> createState() => _ServiceScreenState();
 }
 
 class _ServiceScreenState extends State<ServiceScreen> {
@@ -48,7 +48,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   trailing: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ServiceDetailScreen(serviceUID: service.serviceId),
+                        builder: (context) => ServiceDetailScreen(serviceId: service.serviceId!),
                       ));
                     },
                     child: const Text('Book Now'),

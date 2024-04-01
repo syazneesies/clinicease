@@ -1,12 +1,13 @@
 import 'package:clinicease/screen/my_profile_screen.dart';
-import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/service_model.dart';
 import 'package:clinicease/services/services_service.dart';
 //import 'package:clinicease/screen/edit_service_screen.dart'; // Import the edit service screen
 
 class ServiceDetailScreen extends StatefulWidget {
-  const ServiceDetailScreen({Key? key}) : super(key: key);
+  const ServiceDetailScreen({Key? key, required this.serviceId}) : super(key: key);
+
+  final String serviceId;
 
   @override
   State<ServiceDetailScreen> createState() => _ServiceDetailScreenState();
@@ -15,19 +16,17 @@ class ServiceDetailScreen extends StatefulWidget {
 class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
   late Future<ServiceModel?> _serviceDataFuture;
   final ServiceService _serviceService = ServiceService(); 
-  String? serviceId;
 
   @override
   void initState() {
     super.initState();
-    serviceId = StorageService.getUID(); 
 
     onRefresh();
   }
 
   onRefresh() {
   setState(() {
-    _serviceDataFuture = _serviceService.getServiceData(serviceId!); 
+    _serviceDataFuture = _serviceService.getServiceData(widget.serviceId); 
   });
 
   _serviceDataFuture.then((service) {
