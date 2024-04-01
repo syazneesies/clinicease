@@ -1,17 +1,17 @@
-import 'package:clinicease/screen/my_profile_screen.dart';
+import 'package:clinicease/screen/service_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/service_model.dart';
 import 'package:clinicease/services/services_service.dart';
 
 class ServiceScreen extends StatefulWidget {
-  const ServiceScreen({super.key});
+  const ServiceScreen({Key? key}) : super(key: key);
 
   @override
   _ServiceScreenState createState() => _ServiceScreenState();
 }
 
 class _ServiceScreenState extends State<ServiceScreen> {
-  final RewardService _serviceService = RewardService();
+  final ServiceService _serviceService = ServiceService();
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +48,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   trailing: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyProfileScreen(),
-                        //serviceId: service.id
+                        builder: (context) => ServiceDetailScreen(serviceUID: service.serviceId),
                       ));
                     },
                     child: const Text('Book Now'),

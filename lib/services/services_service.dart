@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clinicease/models/service_model.dart';
 
-class RewardService {
+class ServiceService {
   final CollectionReference serviceCollection =
       FirebaseFirestore.instance.collection('services');
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<ServiceModel>> getServices() async {
     List<ServiceModel> services = [];
@@ -21,4 +22,27 @@ class RewardService {
 
     return services;
   }
+
+  // Retrieve service data from Firestore
+  Future<ServiceModel?> getServiceData(String serviceUID) async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection('services').doc(serviceUID).get();
+
+      if (documentSnapshot.exists) {
+        // Service data found, parse it into UserModel
+        Map<String, dynamic> serviceData = documentSnapshot.data() as Map<String, dynamic>;
+        return ServiceModel.fromJson(serviceData);
+      } else {
+        // Service data not found
+        return null;
+      }
+    } catch (e) {
+      // Error occurred while fetching user data
+      print("Error fetching service data: $e");
+      return null;
+    }
+  }
 }
+
+
