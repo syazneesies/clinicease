@@ -14,6 +14,7 @@ class ServiceService {
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         ServiceModel service = ServiceModel.fromJson(data);
+        service.serviceId = doc.id;
         services.add(service);
       }
     } catch (e) {

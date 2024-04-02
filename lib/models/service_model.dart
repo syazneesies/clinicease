@@ -4,7 +4,7 @@ part 'service_model.g.dart';
 
 @JsonSerializable()
 class ServiceModel {
-  final String? serviceId;
+  String? serviceId;
   final String? serviceName;
   final String? serviceDescription;
   final String? serviceDate;

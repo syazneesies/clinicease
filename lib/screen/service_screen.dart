@@ -47,6 +47,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   ),
                   trailing: ElevatedButton(
                     onPressed: () {
+                      // print('Service ID: ${service.toJson()}');
+                      // print('Service ID: ${service.serviceId}');
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => ServiceDetailScreen(serviceId: service.serviceId!),
                       ));

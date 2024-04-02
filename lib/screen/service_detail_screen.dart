@@ -25,18 +25,18 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
   }
 
   onRefresh() {
-  setState(() {
-    _serviceDataFuture = _serviceService.getServiceData(widget.serviceId); 
-  });
+    setState(() {
+      _serviceDataFuture = _serviceService.getServiceData(widget.serviceId); 
+    });
 
-  _serviceDataFuture.then((service) {
-    if (service != null) {
-      print('Service UID fetched: ${service.serviceId}');
-    } else {
-      print('Service data not found');
-    }
-  });
-}
+    _serviceDataFuture.then((service) {
+      if (service != null) {
+        print('Service UID fetched: ${service.serviceId}');
+      } else {
+        print('Service data not found');
+      }
+    });
+  }
 
 
   @override
