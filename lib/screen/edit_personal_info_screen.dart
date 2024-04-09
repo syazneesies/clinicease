@@ -1,5 +1,3 @@
-// Create me a stateful widget called EditPersonalInfoScreen
-
 import 'package:clinicease/models/user_model.dart';
 import 'package:clinicease/services/auth_service.dart';
 import 'package:clinicease/services/storage_service.dart';
