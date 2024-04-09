@@ -1,52 +1,214 @@
-import 'package:flutter/material.dart';
+import 'package:clinicease/models/branch_model.dart';
 import 'package:clinicease/models/service_model.dart';
-import 'package:clinicease/services/services_service.dart';
 import 'package:clinicease/models/user_model.dart';
-import 'package:clinicease/services/auth_service.dart';
+import 'package:clinicease/services/branch_service.dart';
+import 'package:clinicease/services/services_service.dart';
 import 'package:clinicease/services/storage_service.dart';
+import 'package:flutter/material.dart';
 
 class ServiceConfirmationScreen extends StatefulWidget {
-  const ServiceConfirmationScreen({Key? key, required this.serviceId, required this.user }) : super(key: key);
-
+  const ServiceConfirmationScreen({super.key, required this.serviceId});
   final String serviceId;
-  final UserModel user;
 
   @override
-  State<ServiceConfirmationScreen> createState() => _ServiceConfirmationState();
+  State<ServiceConfirmationScreen> createState() => _ServiceConfirmationScreenState();
 }
 
-class _ServiceConfirmationState extends State<ServiceConfirmationScreen> {
-  late Future<ServiceModel?> _serviceDataFuture;
-  final ServiceService _serviceService = ServiceService(); 
-  final AuthService _authService = AuthService();
-  String? userId;
+class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
+  final BranchService _branchService = BranchService();
+  final ServiceService _serviceService = ServiceService();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  BranchModel? selectedBranch;
+  ServiceModel? service;
+
+  late UserModel? user;
+  List<BranchModel> branches = [];
+
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    userId = StorageService.getUID();
-
-    onRefresh();
+    user = StorageService.getUserData();
+    fullNameController.text = user!.fullName!;
+    phoneNumberController.text = user!.phoneNumber!;
+    getBranches();
+    getService();
   }
 
-  onRefresh() {
-    setState(() {
-      _serviceDataFuture = _serviceService.getServiceData(widget.serviceId); 
-    });
+  getBranches() async {
+    setState(() => isLoading = true);
+    branches = await _branchService.getBranches();
+    for (var b in branches) {
+      print('${b.branchName}');
+    }
+    setState(() => isLoading = false);
+  }
 
-    _serviceDataFuture.then((service) {
-      if (service != null) {
-        print('Service UID fetched: ${widget.serviceId}');
-      } else {
-        print('Service data not found');
-      }
-    });
-
-    _authService.getUserData('Service UID fetched: ${widget.user}');
+  getService() async {
+    setState(() => isLoading = true);
+    service = await _serviceService.getServiceData(widget.serviceId);
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Booking Appointment'),
+      ),
+      body: isLoading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // Title
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Service Info',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+      
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.badge, size: 32, color: Colors.purple.shade900),
+                      title: Text(service?.serviceName ?? 'Service Name'),
+                      subtitle: const Text('Service Name'),
+                      contentPadding: const EdgeInsets.all(0),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.calendar_today, size: 32, color: Colors.purple.shade900),
+                      title: Text(service?.serviceDate ?? 'Service Date'),
+                      subtitle: const Text('Service Date'),
+                      contentPadding: const EdgeInsets.all(0),
+                    ),
+                  ],
+                ),
+              ),
+            
+              // Title
+              const SizedBox(height: 20),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Personal Info',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+      
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: fullNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: phoneNumberController,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
+                ),
+                readOnly: true,
+              ),
+
+              // Title
+              const SizedBox(height: 20),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Booking Appointment Info',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: timeController,
+                decoration: const InputDecoration(
+                  labelText: 'Time',
+                  border: OutlineInputBorder(),
+                ),
+                readOnly: true,
+                onTap: () {
+                  
+                },
+              ),
+
+
+              // Create branch dropdown
+              const SizedBox(height: 10),
+              DropdownButtonFormField<BranchModel>(
+                value: branches.first,
+                decoration: const InputDecoration(
+                  labelText: 'Branch',
+                  border: OutlineInputBorder(),
+                ),
+                items: branches.map<DropdownMenuItem<BranchModel>>((branch) {
+                  return DropdownMenuItem<BranchModel>(
+                    value: branch,
+                    child: Text(branch.branchName!),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedBranch = value;
+                  });
+                },
+              )
+            ]
+          ),
+        ),
+      ),
+      extendBody: true,
+      bottomNavigationBar: SizedBox(
+        height: 80,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton(
+            onPressed: () async {
+              
+              bool isSuccess = true;
+
+              if (isSuccess) {
+                Navigator.of(context).pop({true});
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('User data updated successfully')),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Failed to update user data')),
+                );
+              }
+              
+            }, child: const Text('Save'),
+          ),
+        ),
+      )    
+    );
   }
 }

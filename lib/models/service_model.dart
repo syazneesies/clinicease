@@ -1,4 +1,6 @@
 import 'package:clinicease/helpers/image_json.dart';
+import 'package:clinicease/helpers/timestamp_json.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'service_model.g.dart';
 
@@ -10,6 +12,9 @@ class ServiceModel {
   final String? serviceDate;
   final String? servicePIC;
   final String? serviceQuantity;
+  // @ListTimestampConverter()
+  // @TimestampConverter()
+  final List<Timestamp> serviceTime;
   @ImageUrlConverter()
   final String? imageUrl;
 
@@ -20,6 +25,7 @@ class ServiceModel {
     required this.serviceDate,
     required this.servicePIC,
     required this.serviceQuantity,
+    required this.serviceTime,
     required this.imageUrl,
   });
 
