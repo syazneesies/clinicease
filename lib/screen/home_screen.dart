@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinicease/models/user_model.dart';
+import 'package:clinicease/screen/add_reward_screen.dart';
+import 'package:clinicease/screen/item_screen.dart';
 import 'package:clinicease/screen/login_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:clinicease/screen/reward_screen.dart';
@@ -231,10 +233,17 @@ class MenuCategoriesWidget extends StatelessWidget {
                 );
               },
             ),
-            const MenuCategoryCard(
+           MenuCategoryCard(
               icon: Icons.shopping_cart,
-              label: 'E-Medi Shop',
+              label: 'Online Shop',
               backgroundColor: Colors.green,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ItemScreen(),
+                  ),
+                );
+              },
             ),
             MenuCategoryCard(
               icon: Icons.card_giftcard,
@@ -256,6 +265,18 @@ class MenuCategoriesWidget extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const MyProfileScreen(),
+                  ),
+                );
+              }
+            ),
+            MenuCategoryCard(
+              icon: Icons.add,
+              label: 'Add Reward',
+              backgroundColor: Colors.pink,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddRewardScreen() ,
                   ),
                 );
               }
