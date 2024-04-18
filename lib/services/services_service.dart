@@ -33,7 +33,9 @@ class ServiceService {
       if (documentSnapshot.exists) {
         // Service data found, parse it into UserModel
         Map<String, dynamic> serviceData = documentSnapshot.data() as Map<String, dynamic>;
-        return ServiceModel.fromJson(serviceData);
+        ServiceModel service = ServiceModel.fromJson(serviceData);
+        service.serviceId = documentSnapshot.id;
+        return service;
       } else {
         // Service data not found
         return null;
