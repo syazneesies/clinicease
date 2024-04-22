@@ -35,10 +35,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    assert(_emailController != null, 'Email must not be null');
+    assert(_passwordController != null, 'Password must not be null');
     return Scaffold(
       appBar: AppBar(
         title: const Text("ClinicEase Login", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF202050), // Set the app bar's background color
+        backgroundColor: const Color(0xFF202050), 
       ),
       body: SingleChildScrollView(
         child: Padding(
