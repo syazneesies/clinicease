@@ -30,9 +30,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    assert(_fullNameController != null, 'Full name is required field');
-    assert(_emailController != null, 'Email is required field');
-    assert(_passwordController != null, 'Password is required field');
     return Scaffold(
       appBar: AppBar(title: const Text("Register")),
       body: Padding(
