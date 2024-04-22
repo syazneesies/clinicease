@@ -13,8 +13,8 @@ class ServiceModel {
   final String? servicePIC;
   final String? serviceQuantity;
   // @ListTimestampConverter()
-  // @TimestampConverter()
-  final List<Timestamp> serviceTime;
+  @ListTimestampConverter()
+  final List<DateTime> serviceTime;
   @ImageUrlConverter()
   final String? imageUrl;
 
