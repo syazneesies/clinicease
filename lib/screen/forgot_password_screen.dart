@@ -18,14 +18,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    assert(_emailController != null, 'Email controller must not be null');
     return Scaffold(
       appBar: AppBar(title: const Text("Forgot Password")),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,s
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               "Forgot Your Password?",
