@@ -5,7 +5,7 @@ part 'reward_model.g.dart';
 
 @JsonSerializable()
 class RewardModel {
-  final String? rewardId;
+  String? rewardId;
   final String? rewardName;
   final String? rewardDescription;
   final String? rewardDate;
