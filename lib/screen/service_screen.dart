@@ -43,7 +43,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   ),
                   title: Text(service.serviceName!),
                   subtitle: Text(
-                    'Date: ${service.serviceDate.toString()} Quantity: ${service.serviceQuantity.toString()}',
+                    'Date: ${service.serviceDate.toString()} Available Slots: ${service.serviceQuantity.toString()}',
                   ),
                   trailing: ElevatedButton(
                     onPressed: () {

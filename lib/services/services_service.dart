@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clinicease/models/service_model.dart';
 
+//Get all thes service data
 class ServiceService {
   final CollectionReference serviceCollection =
       FirebaseFirestore.instance.collection('services');
@@ -24,7 +25,7 @@ class ServiceService {
     return services;
   }
 
-  // Retrieve service data from Firestore
+  // Retrieve service data by UID from Firestore
   Future<ServiceModel?> getServiceData(String serviceUID) async {
     try {
       DocumentSnapshot documentSnapshot =
@@ -44,6 +45,31 @@ class ServiceService {
       // Error occurred while fetching user data
       print("Error fetching service data: $e");
       return null;
+    }
+  }
+
+  // Save booking details to Firestore
+  Future<void> saveBookingDetails(Map<String, dynamic> bookingData) async {
+    try {
+      // Add the booking details to the 'booked_services' collection
+      await _firestore.collection('booked_services').add(bookingData);
+
+      // Show success message or handle success as needed
+      print('Booking saved successfully');
+    } catch (error) {
+      // Show error message or handle error as needed
+      print('Failed to save booking: $error');
+    }
+  }
+
+    Future<void> updateServiceQuantity(String serviceId) async {
+    try {
+      await serviceCollection.doc(serviceId).update({
+        'serviceQuantity': FieldValue.increment(-1),
+      });
+    } catch (e) {
+      print("Error updating service quantity: $e");
+      throw e;
     }
   }
 }

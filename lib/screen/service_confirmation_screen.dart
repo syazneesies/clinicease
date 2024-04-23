@@ -4,11 +4,9 @@ import 'package:clinicease/models/user_model.dart';
 import 'package:clinicease/services/branch_service.dart';
 import 'package:clinicease/services/services_service.dart';
 import 'package:clinicease/services/storage_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../helpers/timestamp_json.dart';
-
 
 class ServiceConfirmationScreen extends StatefulWidget {
   const ServiceConfirmationScreen({super.key, required this.serviceId});
@@ -30,18 +28,19 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
   late UserModel? user;
   List<BranchModel> branches = [];
   late List<DateTime> timeOptions;
-
   bool isLoading = false;
-
+  String? userId;
   @override
   void initState() {
     super.initState();
+    userId = StorageService.getUID();
     user = StorageService.getUserData();
     fullNameController.text = user!.fullName!;
     phoneNumberController.text = user!.phoneNumber!;
     getBranches();
     getService();
   }
+
 
   getBranches() async {
     setState(() => isLoading = true);
@@ -176,7 +175,7 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
               // Create branch dropdown
               const SizedBox(height: 10),
               DropdownButtonFormField<BranchModel>(
-                value: branches.first,
+                value: null,
                 decoration: const InputDecoration(
                   labelText: 'Branch',
                   border: OutlineInputBorder(),
@@ -203,23 +202,55 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: ElevatedButton(
-            onPressed: () async {
-              
-              bool isSuccess = true;
+          onPressed: () async {
+          if (service != null && selectedBranch != null && service!.serviceDate != null && user != null) {
+            // Prepare booking data
+            Map<String, dynamic> bookingData = {
+              'serviceName': service!.serviceName,
+              'serviceDate': Timestamp.fromDate(service!.serviceDate!),
+              'fullName': fullNameController.text,
+              'phoneNumber': phoneNumberController.text,
+              'selectedBranch': selectedBranch!.toJson(), // Assuming toJson() method is implemented in BranchModel
+              'selectedTime': timeController.text,
+              'userId': user!.id, // Assuming id is available in UserModel
+              'serviceId': service!.serviceId, // Assuming serviceId is available in ServiceModel
+              'createdAt': FieldValue.serverTimestamp(), // Include server timestamp for createdAt
+            };
 
-              if (isSuccess) {
-                Navigator.of(context).pop({true});
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('User data updated successfully')),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Failed to update user data')),
-                );
-              }
-              
-            }, child: const Text('Save'),
-          ),
+            // Print booking data to console
+            print('Booking Data: $bookingData');
+            
+            try {
+              // Update service quantity
+              await ServiceService().updateServiceQuantity(service!.serviceId!);
+
+              // Call ServiceService to save booking details
+              await ServiceService().saveBookingDetails(bookingData);
+
+              // Show success message or handle success as needed
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Booking saved successfully')),
+              );
+
+              // Pop the screen
+              Navigator.of(context).pop();
+            } catch (e) {
+              // Handle error
+              print("Error saving booking details: $e");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Error: Unable to save booking details')),
+              );
+            }
+          } else {
+            // Handle null values
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error: Some data is null')),
+            );
+          }
+        },
+          child: const Text('Save'),
+        ),
+
         ),
       )    
     );
