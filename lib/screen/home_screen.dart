@@ -3,6 +3,7 @@ import 'package:clinicease/models/user_model.dart';
 import 'package:clinicease/screen/add_reward_screen.dart';
 import 'package:clinicease/screen/item_screen.dart';
 import 'package:clinicease/screen/login_screen.dart';
+import 'package:clinicease/screen/my_booking_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:clinicease/screen/reward_screen.dart';
 import 'package:clinicease/screen/service_screen.dart';
@@ -60,9 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: double.infinity, // Make My Rewards banner fill screen width
+              width: double.infinity, 
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: const Color(0xFF6ABAE1), // Background color for My Rewards banner
+              color: const Color(0xFF6ABAE1), 
               child: Row(
                 children: [
                   const Icon(
@@ -116,6 +117,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onTap: () {
                 // Add onTap functionality for Transaction History
+              },
+            ),
+            ListTile(
+              title: const Text(
+                'My Booking History',
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => const MyBookingsScreen()
+                  )
+                );
               },
             ),
             ListTile(

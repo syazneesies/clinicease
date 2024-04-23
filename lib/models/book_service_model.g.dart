@@ -1,0 +1,30 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'book_service_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+BookedServiceModel _$BookedServiceModelFromJson(Map<String, dynamic> json) =>
+    BookedServiceModel(
+      serviceId: json['serviceId'] as String?,
+      userId: json['userId'] as String?,
+      fullName: json['fullName'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      serviceDate: const TimestampConverter()
+          .fromJson(json['serviceDate'] as Timestamp?),
+      serviceTime: const TimestampConverter()
+          .fromJson(json['serviceTime'] as Timestamp?),
+    )..booked_serviceId = json['booked_serviceId'] as String?;
+
+Map<String, dynamic> _$BookedServiceModelToJson(BookedServiceModel instance) =>
+    <String, dynamic>{
+      'booked_serviceId': instance.booked_serviceId,
+      'serviceId': instance.serviceId,
+      'userId': instance.userId,
+      'fullName': instance.fullName,
+      'phoneNumber': instance.phoneNumber,
+      'serviceDate': const TimestampConverter().toJson(instance.serviceDate),
+      'serviceTime': const TimestampConverter().toJson(instance.serviceTime),
+    };

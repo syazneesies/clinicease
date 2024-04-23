@@ -1,6 +1,8 @@
+import 'package:clinicease/models/book_service_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clinicease/models/service_model.dart';
 
+//Get all thes service data
 class ServiceService {
   final CollectionReference serviceCollection =
       FirebaseFirestore.instance.collection('services');
@@ -24,7 +26,7 @@ class ServiceService {
     return services;
   }
 
-  // Retrieve service data from Firestore
+  // Retrieve service data by UID from Firestore
   Future<ServiceModel?> getServiceData(String serviceUID) async {
     try {
       DocumentSnapshot documentSnapshot =
@@ -46,6 +48,57 @@ class ServiceService {
       return null;
     }
   }
+
+  // Save booking details to Firestore
+  Future<void> saveBookingDetails(Map<String, dynamic> bookingData) async {
+    try {
+      // Add the booking details to the 'booked_services' collection
+      await _firestore.collection('booked_services').add(bookingData);
+
+      // Show success message or handle success as needed
+      print('Booking saved successfully');
+    } catch (error) {
+      // Show error message or handle error as needed
+      print('Failed to save booking: $error');
+    }
+  }
+
+    Future<void> updateServiceQuantity(String serviceId) async {
+    try {
+      await serviceCollection.doc(serviceId).update({
+        'serviceQuantity': FieldValue.increment(-1),
+      });
+    } catch (e) {
+      print("Error updating service quantity: $e");
+      throw e;
+    }
+  }
 }
+
+class BookedServiceService {
+  final CollectionReference _bookedServiceCollection =
+      FirebaseFirestore.instance.collection('booked_services');
+
+  Future<List<BookedServiceModel>> getBookedServices() async {
+    List<BookedServiceModel> bookedServices = [];
+
+    try {
+      QuerySnapshot querySnapshot = await _bookedServiceCollection.get();
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        BookedServiceModel bookedService =
+            BookedServiceModel.fromJson(data);
+        bookedService.booked_serviceId = doc.id;
+        bookedServices.add(bookedService);
+      }
+    } catch (e) {
+      print("Error getting booked services: $e");
+    }
+
+    return bookedServices;
+  }
+}
+
+
 
 

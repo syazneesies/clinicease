@@ -1,45 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-class TimestampConverter implements JsonConverter<DateTime, Timestamp> {
+class TimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
   const TimestampConverter();
 
   @override
-  DateTime fromJson(Timestamp timestamp) {
-    return timestamp.toDate();
+  DateTime? fromJson(Timestamp? value) {
+    return value?.toDate();
   }
 
   @override
-  Timestamp toJson(DateTime date) => Timestamp.fromDate(date);
+  Timestamp? toJson(DateTime? value) {
+    return value != null ? Timestamp.fromDate(value) : null;
+  }
 }
 
-
-class ListTimestampConverter implements JsonConverter<List<DateTime>, List<Timestamp>> {
+class ListTimestampConverter implements JsonConverter<List<DateTime>, List<dynamic>> {
   const ListTimestampConverter();
 
   @override
-  List<DateTime> fromJson(List<Timestamp> timestamps) {
-    return timestamps.map((timestamp) => timestamp.toDate()).toList();
-    // List<DateTime> convertedTimestamp = [];
-
-    // for (var element in timestamps) {
-    //   var e = element.toDate();
-    //   convertedTimestamp.add(e);
-    // }
-
-    // return convertedTimestamp;
+  List<DateTime> fromJson(List<dynamic> timestamps) {
+    return timestamps.map((timestamp) => TimestampConverter().fromJson(timestamp as Timestamp?)).whereType<DateTime>().toList();
   }
 
   @override
-  List<Timestamp> toJson(List<DateTime> dates) {
-    return dates.map((date) => Timestamp.fromDate(date)).toList();
-    // List<Timestamp> convertedDateTime = [];
-
-    // for (var element in dateTime) {
-    //   var e = Timestamp.fromDate(element);
-    //   convertedDateTime.add(e);
-    // }
-
-    // return convertedDateTime;
+  List<dynamic> toJson(List<DateTime> dates) {
+    return dates.map((date) => TimestampConverter().toJson(date)).toList();
   }
 }

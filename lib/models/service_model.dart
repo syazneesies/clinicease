@@ -9,12 +9,12 @@ class ServiceModel {
   String? serviceId;
   final String? serviceName;
   final String? serviceDescription;
-  final String? serviceDate;
+  @TimestampConverter()
+  final DateTime? serviceDate;
   final String? servicePIC;
-  final String? serviceQuantity;
-  // @ListTimestampConverter()
-  // @TimestampConverter()
-  final List<Timestamp> serviceTime;
+  final int? serviceQuantity;
+   @ListTimestampConverter()
+  final List<DateTime> serviceTime; 
   @ImageUrlConverter()
   final String? imageUrl;
 
@@ -31,4 +31,9 @@ class ServiceModel {
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) => _$ServiceModelFromJson(json);
   Map<String, dynamic> toJson() => _$ServiceModelToJson(this);
+
+  void add(ServiceModel bookedservice) {}
 }
+
+
+
