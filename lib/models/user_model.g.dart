@@ -12,8 +12,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       identificationNumber: json['identificationNumber'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
       email: json['email'] as String?,
-      birthdate: _$JsonConverterFromJson<Timestamp, DateTime>(
-          json['birthdate'], const TimestampConverter().fromJson),
+      birthdate:
+          const TimestampConverter().fromJson(json['birthdate'] as Timestamp?),
       gender: json['gender'] as String?,
     );
 
@@ -23,19 +23,6 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'identificationNumber': instance.identificationNumber,
       'phoneNumber': instance.phoneNumber,
       'email': instance.email,
-      'birthdate': _$JsonConverterToJson<Timestamp, DateTime>(
-          instance.birthdate, const TimestampConverter().toJson),
+      'birthdate': const TimestampConverter().toJson(instance.birthdate),
       'gender': instance.gender,
     };
-
-Value? _$JsonConverterFromJson<Json, Value>(
-  Object? json,
-  Value? Function(Json json) fromJson,
-) =>
-    json == null ? null : fromJson(json as Json);
-
-Json? _$JsonConverterToJson<Json, Value>(
-  Value? value,
-  Json? Function(Value value) toJson,
-) =>
-    value == null ? null : toJson(value);

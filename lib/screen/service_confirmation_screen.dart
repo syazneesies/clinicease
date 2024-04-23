@@ -5,6 +5,10 @@ import 'package:clinicease/services/branch_service.dart';
 import 'package:clinicease/services/services_service.dart';
 import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../helpers/timestamp_json.dart';
+
 
 class ServiceConfirmationScreen extends StatefulWidget {
   const ServiceConfirmationScreen({super.key, required this.serviceId});
@@ -25,6 +29,7 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
 
   late UserModel? user;
   List<BranchModel> branches = [];
+  late List<DateTime> timeOptions;
 
   bool isLoading = false;
 
@@ -48,10 +53,11 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
   }
 
   getService() async {
-    setState(() => isLoading = true);
-    service = await _serviceService.getServiceData(widget.serviceId);
-    setState(() => isLoading = false);
-  }
+  setState(() => isLoading = true);
+  service = await _serviceService.getServiceData(widget.serviceId);
+  timeOptions = service!.serviceTime;
+  setState(() => isLoading = false);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +100,7 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
                     ),
                     ListTile(
                       leading: Icon(Icons.calendar_today, size: 32, color: Colors.purple.shade900),
-                      title: Text(service?.serviceDate ?? 'Service Date'),
+                      title: Text(service != null ? DateFormat('dd-MM-yyyy').format(service!.serviceDate!) : 'Service Date'),
                       subtitle: const Text('Service Date'),
                       contentPadding: const EdgeInsets.all(0),
                     ),
@@ -147,17 +153,24 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
               ),
 
               const SizedBox(height: 20),
-              TextFormField(
-                controller: timeController,
-                decoration: const InputDecoration(
-                  labelText: 'Time',
-                  border: OutlineInputBorder(),
-                ),
-                readOnly: true,
-                onTap: () {
-                  
-                },
+              DropdownButtonFormField<DateTime>(
+              value: null,
+              decoration: const InputDecoration(
+                labelText: 'Time',
+                border: OutlineInputBorder(),
               ),
+              items: timeOptions.map((time) {
+                return DropdownMenuItem<DateTime>(
+                  value: time,
+                  child: Text(time.toString()), 
+                );
+              }).toList(),
+              onChanged: (selectedTime) {
+                setState(() {
+                  timeController.text = selectedTime!.toString();
+                });
+              },
+            ),
 
 
               // Create branch dropdown
