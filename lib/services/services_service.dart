@@ -1,3 +1,4 @@
+import 'package:clinicease/models/book_service_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clinicease/models/service_model.dart';
 
@@ -73,5 +74,31 @@ class ServiceService {
     }
   }
 }
+
+class BookedServiceService {
+  final CollectionReference _bookedServiceCollection =
+      FirebaseFirestore.instance.collection('booked_services');
+
+  Future<List<BookedServiceModel>> getBookedServices() async {
+    List<BookedServiceModel> bookedServices = [];
+
+    try {
+      QuerySnapshot querySnapshot = await _bookedServiceCollection.get();
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        BookedServiceModel bookedService =
+            BookedServiceModel.fromJson(data);
+        bookedService.booked_serviceId = doc.id;
+        bookedServices.add(bookedService);
+      }
+    } catch (e) {
+      print("Error getting booked services: $e");
+    }
+
+    return bookedServices;
+  }
+}
+
+
 
 

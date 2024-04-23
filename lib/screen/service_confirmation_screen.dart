@@ -204,6 +204,7 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
           child: ElevatedButton(
           onPressed: () async {
           if (service != null && selectedBranch != null && service!.serviceDate != null && user != null) {
+            DateTime selectedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss.S').parse('${service!.serviceDate} ${timeController.text}');
             // Prepare booking data
             Map<String, dynamic> bookingData = {
               'serviceName': service!.serviceName,
@@ -211,7 +212,7 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
               'fullName': fullNameController.text,
               'phoneNumber': phoneNumberController.text,
               'selectedBranch': selectedBranch!.toJson(), // Assuming toJson() method is implemented in BranchModel
-              'selectedTime': timeController.text,
+              'serviceTime': Timestamp.fromDate(selectedDateTime),
               'userId': user!.id, // Assuming id is available in UserModel
               'serviceId': service!.serviceId, // Assuming serviceId is available in ServiceModel
               'createdAt': FieldValue.serverTimestamp(), // Include server timestamp for createdAt

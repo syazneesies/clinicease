@@ -31,6 +31,8 @@ class ServiceModel {
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) => _$ServiceModelFromJson(json);
   Map<String, dynamic> toJson() => _$ServiceModelToJson(this);
+
+  void add(ServiceModel bookedservice) {}
 }
 
 
