@@ -14,6 +14,7 @@ class RewardService {
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         RewardModel reward = RewardModel.fromJson(data);
+        reward.rewardId = doc.id;
         rewards.add(reward);
       }
     } catch (e) {

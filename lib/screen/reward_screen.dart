@@ -1,3 +1,4 @@
+import 'package:clinicease/screen/reward_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/reward_model.dart';
 import 'package:clinicease/services/reward_service.dart';
@@ -110,15 +111,14 @@ class RewardCardWidget extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //   builder: (context) => const MyProfileScreen(),
-                        //   //serviceId: service.id
-                        // ));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Redeem button clicked - ${reward.rewardName}'),
-                          ),
-                        );
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => RewardDetailScreen(rewardId: reward.rewardId!),
+                        ));
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(
+                        //     content: Text('Redeem button clicked - ${reward.rewardName}'),
+                        //   ),
+                        // );
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),

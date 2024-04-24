@@ -5,7 +5,6 @@ import 'package:clinicease/services/reward_service.dart';
 
 class RewardDetailScreen extends StatefulWidget {
   const RewardDetailScreen({Key? key, required this.rewardId}) : super(key: key);
-
   final String rewardId;
 
   @override
@@ -31,9 +30,9 @@ class _RewardDetailScreenState extends State<RewardDetailScreen> {
 
     _rewardDataFuture.then((reward) {
       if (reward != null) {
-        print('Service UID fetched: ${reward.rewardId}');
+        print('Reward UID fetched: ${reward.rewardId}');
       } else {
-        print('Service data not found');
+        print('Reward data not found');
       }
     });
   }
@@ -43,7 +42,7 @@ class _RewardDetailScreenState extends State<RewardDetailScreen> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: const Text('Service Info'),
+      title: const Text('Reward Info'),
     ),
     body: FutureBuilder<RewardModel?>(
       future: _rewardDataFuture,
