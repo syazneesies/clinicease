@@ -4,7 +4,7 @@ part 'item_model.g.dart';
 
 @JsonSerializable()
 class ItemModel {
-  final String? itemId;
+  String? itemId;
   final String? itemName;
   final String? itemDescription;
   final String? itemDate;

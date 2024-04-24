@@ -1,4 +1,5 @@
 import 'package:clinicease/models/item_model.dart';
+import 'package:clinicease/screen/item_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/services/item_service.dart';
 
@@ -19,7 +20,7 @@ class _ItemScreenState extends State<ItemScreen> {
         title: const Text('Item List'),
       ),
       body: FutureBuilder(
-        future: _itemService.getItems(),
+        future: _itemService.getItem(),
         builder: (context, AsyncSnapshot<List<ItemModel>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -109,16 +110,16 @@ class ItemCardWidget extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //   builder: (context) => const MyProfileScreen(),
-                        //   //serviceId: service.id
-                        // ));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Buy button clicked - ${item.itemName}'),
-                          ),
-                        );
-                      },
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ItemDetailScreen(itemId: item.itemId!),
+                      ));
+                    },
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(
+                        //     content: Text('Buy button clicked - ${item.itemName}'),
+                        //   ),
+                        // );
+      
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         decoration: BoxDecoration(
