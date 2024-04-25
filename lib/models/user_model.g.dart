@@ -15,6 +15,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       birthdate:
           const TimestampConverter().fromJson(json['birthdate'] as Timestamp?),
       gender: json['gender'] as String?,
+      rewardPoints: json['rewardPoints'] as int?,
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -25,4 +26,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'email': instance.email,
       'birthdate': const TimestampConverter().toJson(instance.birthdate),
       'gender': instance.gender,
+      'rewardPoints': instance.rewardPoints,
     };

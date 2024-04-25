@@ -146,6 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 email: _emailController.text,
                 birthdate: _selectedBirthdate,
                 gender: _selectedGender ?? '',
+                rewardPoints: 0,
               );
 
               // Call registration logic here

@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            const DisplayCardWidget(),
+            DisplayCardWidget(user: user),
             const SizedBox(height: 20),
             const MenuCategoriesWidget(),
           ],
@@ -169,7 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 class DisplayCardWidget extends StatelessWidget {
-  const DisplayCardWidget({super.key});
+  final UserModel? user;
+  const DisplayCardWidget({Key? key, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -180,24 +181,21 @@ class DisplayCardWidget extends StatelessWidget {
         color: const Color(0xFF6ABAE1),
         borderRadius: BorderRadius.circular(10),
       ),
-      
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start, 
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'My Rewards',
-            
-            style: TextStyle( // Use _textStyle
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-      
-          SizedBox(height: 8,),
+          SizedBox(height: 8),
           Text(
-            'Points: 100', // Display rewards points here
-            style: TextStyle( // Use _textStyle
+            'Points: ${user?.rewardPoints ?? 'User'}',  
+            style: TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),

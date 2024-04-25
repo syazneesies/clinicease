@@ -199,6 +199,7 @@ class _EditProfileDataScreenState extends State<EditProfileDataScreen> {
                 email: emailController.text,
                 birthdate: DateTime.parse(birthdateController.text), 
                 gender: genderController.text,
+                rewardPoints: 0,
               );
               bool isSuccess = await _authService.updateUserData(updatedUser);
 

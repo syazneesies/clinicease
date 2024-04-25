@@ -13,6 +13,7 @@ class UserModel {
   @TimestampConverter()
   final DateTime? birthdate;
   final String? gender;
+  final int? rewardPoints;
 
   UserModel({
     required this.id,
@@ -22,6 +23,7 @@ class UserModel {
     required this.email,
     required this.birthdate,
     required this.gender,
+    required this.rewardPoints,
   });
 
   // Define copyWith method
@@ -34,6 +36,7 @@ class UserModel {
     String? password,
     DateTime? birthdate,
     String? gender,
+    int? rewardPoints,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -43,6 +46,7 @@ class UserModel {
       email: email ?? this.email,
       birthdate: birthdate ?? this.birthdate,
       gender: gender ?? this.gender,
+      rewardPoints: rewardPoints ?? this.rewardPoints,
     );
   }
   
