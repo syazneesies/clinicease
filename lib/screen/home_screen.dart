@@ -7,7 +7,9 @@ import 'package:clinicease/screen/my_booking_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:clinicease/screen/reward_screen.dart';
 import 'package:clinicease/screen/service_screen.dart';
+import 'package:clinicease/services/auth_service.dart';
 import 'package:clinicease/services/storage_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final AuthService _auth = AuthService();
   DateTime now = DateTime.now();
   UserModel? user;
   String? userId;
@@ -36,9 +39,22 @@ class _HomeScreenState extends State<HomeScreen> {
       greeting = 'Good Evening';
     }
 
-    // Get user data from storage
-    user = StorageService.getUserData();
+    onRefresh();
+
     super.initState();
+  }
+
+  onRefresh() async {
+    // Get user data from storage
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+    await _auth.getUserData(firebaseUser!.uid).then((value) {
+      if (value != null) {
+        StorageService.setUserData(value);
+      }
+    });
+
+    user = StorageService.getUserData();
+    setState(() {});
   }
 
   @override
@@ -56,42 +72,45 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity, 
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: const Color(0xFF6ABAE1), 
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.account_circle,
-                    size: 40,
-                    color: Color(0xFF202050),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: AutoSizeText(
-                      '$greeting, ${user?.fullName ?? 'User'}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      maxLines: 2,
-                      minFontSize: 8,
-                      maxFontSize: 24,
+      body: RefreshIndicator(
+        onRefresh: () async => onRefresh(),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity, 
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: const Color(0xFF6ABAE1), 
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.account_circle,
+                      size: 40,
+                      color: Color(0xFF202050),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AutoSizeText(
+                        '$greeting, ${user?.fullName ?? 'User'}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        maxLines: 2,
+                        minFontSize: 8,
+                        maxFontSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            DisplayCardWidget(user: user),
-            const SizedBox(height: 20),
-            const MenuCategoriesWidget(),
-          ],
+              DisplayCardWidget(user: user),
+              const SizedBox(height: 20),
+              const MenuCategoriesWidget(),
+            ],
+          ),
         ),
       ),
       drawer: Drawer(
@@ -184,7 +203,7 @@ class DisplayCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'My Rewards',
             style: TextStyle(
               fontSize: 20,
@@ -192,10 +211,10 @@ class DisplayCardWidget extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            'Points: ${user?.rewardPoints ?? 'User'}',  
-            style: TextStyle(
+            'Points: ${user?.rewardPoints ?? '-'}',  
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),
@@ -239,7 +258,7 @@ class MenuCategoriesWidget extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ServiceScreen(),
+                    builder: (context) => const ServiceScreen(),
                   ),
                 );
               },
@@ -251,7 +270,7 @@ class MenuCategoriesWidget extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ItemScreen(),
+                    builder: (context) => const ItemScreen(),
                   ),
                 );
               },
@@ -263,7 +282,7 @@ class MenuCategoriesWidget extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => RewardScreen(),
+                    builder: (context) => const RewardScreen(),
                   ),
                 );
               },
@@ -287,7 +306,7 @@ class MenuCategoriesWidget extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => AddRewardScreen() ,
+                    builder: (context) => const AddRewardScreen() ,
                   ),
                 );
               }
