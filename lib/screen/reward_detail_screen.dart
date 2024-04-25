@@ -1,4 +1,5 @@
 import 'package:clinicease/screen/my_profile_screen.dart';
+import 'package:clinicease/screen/reward_confirmation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/reward_model.dart';
 import 'package:clinicease/services/reward_service.dart';
@@ -24,13 +25,15 @@ class _RewardDetailScreenState extends State<RewardDetailScreen> {
 
   onRefresh() {
     setState(() {
-      _rewardDataFuture = _rewardService.getServiceData(widget.rewardId); 
+      _rewardDataFuture = _rewardService.getRewardData(widget.rewardId); 
+      print('Reward UID fetched #1: ${widget.rewardId}');
     });
  
 
     _rewardDataFuture.then((reward) {
       if (reward != null) {
         print('Reward UID fetched: ${reward.rewardId}');
+        print('Reward UID fetched #2: ${reward.toJson()}');
       } else {
         print('Reward data not found');
       }
@@ -102,10 +105,13 @@ Widget build(BuildContext context) {
                   padding: const EdgeInsets.all(16),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>MyProfileScreen(),
-                      ));
-                    },
+                        print('id: ${reward.rewardId!}');
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => RewardConfirmationScreen(
+                            rewardId: reward.rewardId!,
+                          ),
+                        ));
+                      },
                     child: Text('Redeem Now'),
                   ),
                 ),

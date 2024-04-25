@@ -1,5 +1,6 @@
-
 import 'package:clinicease/helpers/image_json.dart';
+import 'package:clinicease/helpers/timestamp_json.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'reward_model.g.dart';
 
@@ -8,9 +9,10 @@ class RewardModel {
   String? rewardId;
   final String? rewardName;
   final String? rewardDescription;
-  final String? rewardDate;
+  @TimestampConverter()
+  final DateTime? rewardDate;
   final String? rewardPIC;
-  final String? rewardQuantity;
+  final int? rewardQuantity;
   final String? rewardStatus;
   final int? rewardPoint;
   @ImageUrlConverter()
