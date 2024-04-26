@@ -40,109 +40,210 @@ class _RewardConfirmationScreenState extends State<RewardConfirmationScreen> {
   setState(() => isLoading = false);
 }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Purchase Reward'),
-      ),
-      body: isLoading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Title
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Reward Info',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Purchase Reward'),
+    ),
+    body: isLoading
+        ? Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Reward Name before the image
+                  Text(
+                    reward?.rewardName ?? 'Reward Name',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 10),
+
+                  // Image displayed as square
+                  reward?.imageUrl != null
+                      ? Container(
+                          width: double.infinity,
+                          height: 200,
+                          child: Image.network(
+                            reward!.imageUrl!,
+                            fit: BoxFit.fitHeight,
+                          ),
+                        )
+                      : SizedBox(),
+
+                  const SizedBox(height: 20),
+
+                  // Purple box containing reward details
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Reward Description
+                        Row(
+                          children: [
+                            Icon(Icons.notes, color: Colors.grey),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Description:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          reward?.rewardDescription ?? 'Description',
+                          style: TextStyle(fontSize: 14),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        // Redeemed By
+                        Row(
+                          children: [
+                            Icon(Icons.date_range, color: Colors.grey),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Redeemed By:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          reward != null
+                              ? DateFormat('dd-MM-yyyy').format(reward!.rewardDate!)
+                              : 'Redeemed By',
+                          style: TextStyle(fontSize: 14),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        // Reward Points
+                        Row(
+                          children: [
+                            Icon(Icons.star, color: Colors.grey),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Points Needed:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          reward?.rewardPoint.toString() ?? '0',
+                          style: TextStyle(fontSize: 14),
+                        ),
+
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-      
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.badge, size: 32, color: Colors.purple.shade900),
-                      title: Text(reward?.rewardName?? 'Reward Name'),
-                      subtitle: const Text('Reward Name'),
-                      contentPadding: const EdgeInsets.all(0),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.calendar_today, size: 32, color: Colors.purple.shade900),
-                      title: Text(reward != null ? DateFormat('dd-MM-yyyy').format(reward!.rewardDate!) : 'Redeemed By'),
-                      subtitle: const Text('Redeemed By'),
-                      contentPadding: const EdgeInsets.all(0),
-                    ),
-                  ],
-                ),
-              ),          
-            ]
+            ),
           ),
-        ),
-      ),
-      extendBody: true,
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ElevatedButton(
-          onPressed: () async {
-          if (reward != null && reward!.rewardDate != null && user != null) {
-            DateTime selectedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss.S').parse('${reward!.rewardDate} ${timeController.text}');
-            // Prepare booking data
-            Map<String, dynamic> purchaseRewardData = {
-              'rewardName': reward!.rewardName,
-              'rewardDate': Timestamp.fromDate(reward!.rewardDate!),
-              'rewardDescription': reward!.rewardDescription,
-              'userId': user!.id, 
-              'serviceId': reward!.rewardId, 
-              'createdAt': FieldValue.serverTimestamp(), 
-            };
+        extendBody: true,
+        bottomNavigationBar: SizedBox(
+          height: 80,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+            onPressed: () async {
+        if (reward != null && reward!.rewardDate != null && user != null) {
+          // Check if user has sufficient reward points
+          if ((user!.rewardPoints ?? 0) >= (reward!.rewardPoint ?? 0)) {
+            // If user has sufficient points, show confirmation dialog
+            bool confirmPurchase = await showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Confirm Purchase'),
+                content: Text('Are you sure you want to purchase this reward?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false); // Return false when user cancels
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true); // Return true when user confirms
+                    },
+                    child: Text('Confirm'),
+                  ),
+                ],
+              ),
+            );
 
-            // Print booking data to console
-            print('Purchase Reward Data: $purchaseRewardData');
-            
-            try {
-              // Update service quantity
-              await RewardService().updateRewardQuantity(reward!.rewardId!);
+            // If user confirms the purchase
+            if (confirmPurchase == true) {
+              // Proceed with the purchase
+              DateTime selectedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss.S').parse('${reward!.rewardDate} ${timeController.text}');
+              // Prepare booking data
+              Map<String, dynamic> purchaseRewardData = {
+                'rewardName': reward!.rewardName,
+                'rewardDate': Timestamp.fromDate(reward!.rewardDate!),
+                'rewardDescription': reward!.rewardDescription,
+                'userId': userId, 
+                'rewardId': reward!.rewardId, 
+                'createdAt': FieldValue.serverTimestamp(), 
+              };
 
-              // Call ServiceService to save booking details
-              await RewardService().savePurchaseRewardDetails(purchaseRewardData);
+              try {
+                // Update service quantity
+                await RewardService().updateRewardQuantity(reward!.rewardId!);
 
-              // Show success message or handle success as needed
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reward purchase successfully')),
-              );
+                // Call ServiceService to save booking details
+                await RewardService().savePurchaseRewardDetails(purchaseRewardData);
 
-              // Pop the screen
-              Navigator.of(context).pop();
-            } catch (e) {
-              // Handle error
-              print("Error in purchasing reward: $e");
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Error: Unable to proceed the transaction')),
-              );
+                // Show success message or handle success as needed
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Reward purchase successfully')),
+                );
+
+                // Pop the screen
+                Navigator.of(context).pop();
+              } catch (e) {
+                // Handle error
+                print("Error in purchasing reward: $e");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Error: Unable to proceed the transaction')),
+                );
+              }
             }
           } else {
-            // Handle null values
+            // If user doesn't have sufficient points, show error message
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Error: Some data is null')),
+              const SnackBar(content: Text('Error: Insufficient reward points')),
             );
           }
-        },
-          child: const Text('Purchase'),
+        } else {
+          // Handle null values
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: Some data is null')),
+          );
+        }
+      },
+        
+          child: Text('Purchase Reward'),
         ),
 
         ),
