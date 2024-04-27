@@ -97,3 +97,28 @@ class BookedServiceService {
   }
 }
 
+class PurchasedRewardService {
+  final CollectionReference _purchasedRewardsCollection =
+      FirebaseFirestore.instance.collection('purchased_rewards');
+
+  Future<List<PurchasedRewardModel>> getPurchasedRewards() async {
+    List<PurchasedRewardModel> purchasedRewards = [];
+
+    try {
+      QuerySnapshot querySnapshot = await _purchasedRewardsCollection.get();
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        PurchasedRewardModel purchasedReward =
+            PurchasedRewardModel.fromJson(data);
+        purchasedReward.purchased_rewardId = doc.id;
+        purchasedRewards.add(purchasedReward);
+      }
+    } catch (e) {
+      print("Error getting purchased Rewards: $e");
+    }
+
+    return purchasedRewards;
+  }
+}
+
+

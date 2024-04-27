@@ -1,4 +1,3 @@
-import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:clinicease/screen/reward_confirmation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/reward_model.dart';

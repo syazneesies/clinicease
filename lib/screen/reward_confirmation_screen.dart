@@ -195,9 +195,17 @@ Widget build(BuildContext context) {
 
             // If user confirms the purchase
             if (confirmPurchase == true) {
+            int newRewardPoints = (user?.rewardPoints ?? 0) - (reward?.rewardPoint ?? 0);
+
+            try {
+              // Update user's reward points in Firestore
+              await FirebaseFirestore.instance.collection('users').doc(userId).update({
+                'rewardPoints': newRewardPoints,
+              });
+
               // Proceed with the purchase
               DateTime selectedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss.S').parse('${reward!.rewardDate} ${timeController.text}');
-              // Prepare booking data
+              // Prepare purchase data
               Map<String, dynamic> purchaseRewardData = {
                 'rewardName': reward!.rewardName,
                 'rewardDate': Timestamp.fromDate(reward!.rewardDate!),
@@ -207,28 +215,24 @@ Widget build(BuildContext context) {
                 'createdAt': FieldValue.serverTimestamp(), 
               };
 
-              try {
-                // Update service quantity
-                await RewardService().updateRewardQuantity(reward!.rewardId!);
+              // Save purchase details and update reward quantity
+              await RewardService().savePurchaseRewardDetails(purchaseRewardData);
 
-                // Call ServiceService to save booking details
-                await RewardService().savePurchaseRewardDetails(purchaseRewardData);
+              // Show success message or handle success as needed
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Reward purchased successfully')),
+              );
 
-                // Show success message or handle success as needed
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Reward purchase successfully')),
-                );
-
-                // Pop the screen
-                Navigator.of(context).pop();
-              } catch (e) {
-                // Handle error
-                print("Error in purchasing reward: $e");
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Error: Unable to proceed the transaction')),
-                );
-              }
+              // Pop the screen
+              Navigator.of(context).pop();
+            } catch (e) {
+              // Handle error
+              print("Error in purchasing reward: $e");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Error: Unable to proceed the transaction')),
+              );
             }
+          }
           } else {
             // If user doesn't have sufficient points, show error message
             ScaffoldMessenger.of(context).showSnackBar(

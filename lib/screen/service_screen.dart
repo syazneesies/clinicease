@@ -2,6 +2,7 @@ import 'package:clinicease/screen/service_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/service_model.dart';
 import 'package:clinicease/services/services_service.dart';
+import 'package:intl/intl.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({Key? key}) : super(key: key);
@@ -42,8 +43,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     height: 50,
                   ),
                   title: Text(service.serviceName!),
-                  subtitle: Text(
-                    'Date: ${service.serviceDate.toString()} Available Slots: ${service.serviceQuantity.toString()}',
+                   subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                   Text('Date: ${service.serviceDate != null ? DateFormat('dd-MM-yyyy').format(service.serviceDate!) : 'N/A'}'),
+                   Text('Available Slots: ${service.serviceQuantity}'),
+                    ],
                   ),
                   trailing: ElevatedButton(
                     onPressed: () {

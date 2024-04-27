@@ -5,6 +5,7 @@ import 'package:clinicease/screen/item_screen.dart';
 import 'package:clinicease/screen/login_screen.dart';
 import 'package:clinicease/screen/my_booking_screen.dart';
 import 'package:clinicease/screen/my_profile_screen.dart';
+import 'package:clinicease/screen/my_reward_screen.dart';
 import 'package:clinicease/screen/reward_screen.dart';
 import 'package:clinicease/screen/service_screen.dart';
 import 'package:clinicease/services/auth_service.dart';
@@ -130,14 +131,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            ListTile(
-              title: const Text(
-                'My Transaction History',
-              ),
-              onTap: () {
-                // Add onTap functionality for Transaction History
-              },
-            ),
+            // ListTile(
+            //   title: const Text(
+            //     'My Transaction History',
+            //   ),
+            //   onTap: () {
+            //     // Add onTap functionality for Transaction History
+            //   },
+            // ),
             ListTile(
               title: const Text(
                 'My Booking History',
@@ -146,6 +147,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => const MyBookingsScreen()
+                  )
+                );
+              },
+            ),
+            ListTile(
+              title: const Text(
+                'My Purchased Rewards',
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => const MyRewardScreen()
                   )
                 );
               },

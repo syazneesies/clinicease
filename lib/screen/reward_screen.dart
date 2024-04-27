@@ -2,6 +2,7 @@ import 'package:clinicease/screen/reward_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/reward_model.dart';
 import 'package:clinicease/services/reward_service.dart';
+import 'package:intl/intl.dart';
 
 class RewardScreen extends StatefulWidget {
   const RewardScreen({super.key});
@@ -103,7 +104,7 @@ class RewardCardWidget extends StatelessWidget {
                     ),
                   ),
                   Text('${reward.rewardPoint.toString()} Points',),
-                  Text('Redeem before ${reward.rewardDate.toString()}', style: const TextStyle(fontSize: 12)),
+                 Text('Date: ${reward.rewardDate != null ? DateFormat('dd-MM-yyyy').format(reward.rewardDate!) : 'N/A'}'),
                   const SizedBox(height: 16),
 
                   // Button

@@ -12,6 +12,8 @@ class PurchasedRewardModel {
   final String? rewardDescription;
   @TimestampConverter()
   final DateTime? rewardDate;
+  @TimestampConverter()
+  final DateTime? createdAt;
 
   PurchasedRewardModel({
     required this.rewardId,
@@ -19,6 +21,7 @@ class PurchasedRewardModel {
     required this.rewardName,
     required this.rewardDescription,
     required this.rewardDate,
+    required this.createdAt,
   });
 
   factory PurchasedRewardModel.fromJson(Map<String, dynamic> json) => _$PurchasedRewardModelFromJson(json);
