@@ -1,6 +1,7 @@
 import 'package:clinicease/models/purchased_reward_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clinicease/models/reward_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RewardService {
   final CollectionReference rewardCollection =
@@ -101,11 +102,16 @@ class PurchasedRewardService {
   final CollectionReference _purchasedRewardsCollection =
       FirebaseFirestore.instance.collection('purchased_rewards');
 
+  // Current user ID
+  final String? userId = FirebaseAuth.instance.currentUser?.uid;
+
   Future<List<PurchasedRewardModel>> getPurchasedRewards() async {
     List<PurchasedRewardModel> purchasedRewards = [];
 
     try {
-      QuerySnapshot querySnapshot = await _purchasedRewardsCollection.get();
+      QuerySnapshot querySnapshot = await _purchasedRewardsCollection
+          .where('userId', isEqualTo: userId) 
+          .get();
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         PurchasedRewardModel purchasedReward =

@@ -14,8 +14,9 @@ BookedServiceModel _$BookedServiceModelFromJson(Map<String, dynamic> json) =>
       phoneNumber: json['phoneNumber'] as String?,
       serviceDate: const TimestampConverter()
           .fromJson(json['serviceDate'] as Timestamp?),
-      serviceTime: const TimestampConverter()
-          .fromJson(json['serviceTime'] as Timestamp?),
+      serviceTimes: const TimestampConverter()
+          .fromJson(json['serviceTimes'] as Timestamp?),
+      serviceName: json['serviceName'] as String?,
     )..booked_serviceId = json['booked_serviceId'] as String?;
 
 Map<String, dynamic> _$BookedServiceModelToJson(BookedServiceModel instance) =>
@@ -25,6 +26,7 @@ Map<String, dynamic> _$BookedServiceModelToJson(BookedServiceModel instance) =>
       'userId': instance.userId,
       'fullName': instance.fullName,
       'phoneNumber': instance.phoneNumber,
+      'serviceName': instance.serviceName,
       'serviceDate': const TimestampConverter().toJson(instance.serviceDate),
-      'serviceTime': const TimestampConverter().toJson(instance.serviceTime),
+      'serviceTimes': const TimestampConverter().toJson(instance.serviceTimes),
     };

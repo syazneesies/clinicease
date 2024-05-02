@@ -1,3 +1,4 @@
+import 'package:clinicease/helpers/date_time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/book_service_model.dart'; 
 import 'package:clinicease/services/services_service.dart'; 
@@ -33,25 +34,25 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                final bookedService = snapshot.data![index];
-                return ListTile(
-                  // leading: Image.network(
-                  //   bookedService.imageUrl!,
-                  //   width: 50,
-                  //   height: 50,
-                  // ),
-                  title: Text(bookedService.fullName.toString()),
-                  subtitle: Text(
-                    'Date: ${bookedService.serviceDate.toString()}',
-                  ),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      // Handle button press action (if needed)
-                    },
-                    child: const Text('View Details'),
-                  ),
-                );
-              },
+              final bookedService = snapshot.data![index];
+              return ListTile(
+                title: Text(bookedService.fullName ?? 'N/A'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Service: ${bookedService.serviceName ?? 'N/A'}'),
+                    Text('Date: ${formatDate(bookedService.serviceDate)}'),
+                    //Text('Time: ${formatTime(bookedService.serviceTimes)}'),
+                  ],
+                ),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    // Handle button press action (if needed)
+                  },
+                  child: const Text('View Details'),
+                ),
+              );
+            },
             );
           }
         },

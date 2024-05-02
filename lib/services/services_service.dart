@@ -8,23 +8,31 @@ class ServiceService {
       FirebaseFirestore.instance.collection('services');
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<List<ServiceModel>> getServices() async {
-    List<ServiceModel> services = [];
-
-    try {
-      QuerySnapshot querySnapshot = await serviceCollection.get();
+ Future<List<ServiceModel>> getServices() async {
+  List<ServiceModel> services = [];
+  
+  try {
+    QuerySnapshot? querySnapshot = await serviceCollection.get();
+    if (querySnapshot != null) {
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         ServiceModel service = ServiceModel.fromJson(data);
         service.serviceId = doc.id;
         services.add(service);
-      }
-    } catch (e) {
-      print("Error getting services: $e");
-    }
 
-    return services;
+        // Add debug output to display the retrieved data
+        print("Retrieved service: $service");
+      }
+    } else {
+      print("QuerySnapshot is null");
+    }
+  } catch (e) {
+    // Handle specific errors that might occur during the get() call
+    print("Error getting services: $e");
   }
+
+  return services;
+}
 
   // Retrieve service data by UID from Firestore
   Future<ServiceModel?> getServiceData(String serviceUID) async {
@@ -98,7 +106,4 @@ class BookedServiceService {
     return bookedServices;
   }
 }
-
-
-
 

@@ -54,7 +54,7 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
   getService() async {
   setState(() => isLoading = true);
   service = await _serviceService.getServiceData(widget.serviceId);
-  timeOptions = service!.serviceTime;
+  timeOptions = service!.serviceTimes;
   setState(() => isLoading = false);
 }
 
@@ -212,8 +212,8 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
               'fullName': fullNameController.text,
               'phoneNumber': phoneNumberController.text,
               'selectedBranch': selectedBranch!.toJson(), // Assuming toJson() method is implemented in BranchModel
-              'serviceTime': Timestamp.fromDate(selectedDateTime),
-              'userId': user!.id, // Assuming id is available in UserModel
+              'serviceTimes': Timestamp.fromDate(selectedDateTime),
+              'userId': userId, // Assuming id is available in UserModel
               'serviceId': service!.serviceId, // Assuming serviceId is available in ServiceModel
               'createdAt': FieldValue.serverTimestamp(), // Include server timestamp for createdAt
             };

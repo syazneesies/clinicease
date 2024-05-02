@@ -10,10 +10,11 @@ class BookedServiceModel {
   final String? userId;
   final String? fullName;
   final String? phoneNumber;
+  final String? serviceName;
   @TimestampConverter()
   final DateTime? serviceDate;
   @TimestampConverter()
-  final DateTime? serviceTime;
+  final DateTime? serviceTimes;
 
   BookedServiceModel({
     required this.serviceId,
@@ -21,7 +22,8 @@ class BookedServiceModel {
     required this.fullName,
     required this.phoneNumber,
     required this.serviceDate,
-    required this.serviceTime,
+    required this.serviceTimes,
+    required this.serviceName,
   });
 
   factory BookedServiceModel.fromJson(Map<String, dynamic> json) => _$BookedServiceModelFromJson(json);

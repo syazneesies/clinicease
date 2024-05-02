@@ -24,12 +24,16 @@ class _ServiceScreenState extends State<ServiceScreen> {
         future: _serviceService.getServices(),
         builder: (context, AsyncSnapshot<List<ServiceModel>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text('No data available'),
             );
           } else {
             return ListView.builder(

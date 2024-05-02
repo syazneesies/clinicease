@@ -14,8 +14,8 @@ ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) => ServiceModel(
           .fromJson(json['serviceDate'] as Timestamp?),
       servicePIC: json['servicePIC'] as String?,
       serviceQuantity: json['serviceQuantity'] as int?,
-      serviceTime:
-          const ListTimestampConverter().fromJson(json['serviceTime'] as List),
+      serviceTimes:
+          const ListTimestampConverter().fromJson(json['serviceTimes'] as List),
       imageUrl: const ImageUrlConverter().fromJson(json['imageUrl']),
     );
 
@@ -27,8 +27,8 @@ Map<String, dynamic> _$ServiceModelToJson(ServiceModel instance) =>
       'serviceDate': const TimestampConverter().toJson(instance.serviceDate),
       'servicePIC': instance.servicePIC,
       'serviceQuantity': instance.serviceQuantity,
-      'serviceTime':
-          const ListTimestampConverter().toJson(instance.serviceTime),
+      'serviceTimes':
+          const ListTimestampConverter().toJson(instance.serviceTimes),
       'imageUrl': _$JsonConverterToJson<dynamic, String>(
           instance.imageUrl, const ImageUrlConverter().toJson),
     };
