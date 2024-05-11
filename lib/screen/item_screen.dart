@@ -1,10 +1,13 @@
 import 'package:clinicease/models/item_model.dart';
+import 'package:clinicease/screen/cart_screen.dart';
 import 'package:clinicease/screen/item_detail_screen.dart';
+import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/services/item_service.dart';
+//import 'package:clinicease/screen/cart_page.dart';
 
 class ItemScreen extends StatefulWidget {
-  const ItemScreen({super.key});
+  const ItemScreen({Key? key}) : super(key: key);
 
   @override
   State<ItemScreen> createState() => _ItemScreenState();
@@ -18,6 +21,20 @@ class _ItemScreenState extends State<ItemScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Item List'),
+        actions: [
+          GestureDetector(
+            onTap: () {
+               // Replace ... with your item object
+              Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MyProfileScreen(), // Navigate to your CartPage
+              ));
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(Icons.shopping_cart), // Add your cart icon here
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: _itemService.getItem(),
@@ -35,7 +52,7 @@ class _ItemScreenState extends State<ItemScreen> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final item = snapshot.data![index];
-                return ItemCardWidget (item: item);
+                return ItemCardWidget(item: item);
               },
             );
           }
@@ -45,9 +62,8 @@ class _ItemScreenState extends State<ItemScreen> {
   }
 }
 
-
 class ItemCardWidget extends StatelessWidget {
-  const ItemCardWidget({super.key, required this.item});
+  const ItemCardWidget({Key? key, required this.item}) : super(key: key);
 
   final ItemModel item;
 
@@ -60,14 +76,14 @@ class ItemCardWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.grey.shade100,
-            spreadRadius: 4,
+            color: Colors.grey,
+            spreadRadius: 1,
             blurRadius: 2,
-            offset: const Offset(0, 1),
+            offset: Offset(0, 1),
           ),
-        ]
+        ],
       ),
       child: Row(
         children: [
@@ -78,7 +94,6 @@ class ItemCardWidget extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                // border: Border.all(color: Colors.grey.shade200),
               ),
               child: Image.network(
                 item.imageUrl!,
@@ -102,7 +117,7 @@ class ItemCardWidget extends StatelessWidget {
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Text('RM ${item.itemPrice}',),
+                  Text('RM ${item.itemPrice}'),
                   const SizedBox(height: 16),
 
                   // Button
@@ -110,16 +125,10 @@ class ItemCardWidget extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ItemDetailScreen(itemId: item.itemId!),
-                      ));
-                    },
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   SnackBar(
-                        //     content: Text('Buy button clicked - ${item.itemName}'),
-                        //   ),
-                        // );
-      
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ItemDetailScreen(itemId: item.itemId!),
+                        ));
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         decoration: BoxDecoration(
@@ -134,7 +143,6 @@ class ItemCardWidget extends StatelessWidget {
               ),
             ),
           ),
-          
         ],
       ),
     );

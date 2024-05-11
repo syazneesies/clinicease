@@ -13,7 +13,7 @@ ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) => ServiceModel(
       serviceDate: const TimestampConverter()
           .fromJson(json['serviceDate'] as Timestamp?),
       servicePIC: json['servicePIC'] as String?,
-      serviceQuantity: json['serviceQuantity'] as int?,
+      serviceQuantity: (json['serviceQuantity'] as num?)?.toInt(),
       serviceTimes:
           const ListTimestampConverter().fromJson(json['serviceTimes'] as List),
       imageUrl: const ImageUrlConverter().fromJson(json['imageUrl']),

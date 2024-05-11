@@ -39,7 +39,6 @@ class _RewardDetailScreenState extends State<RewardDetailScreen> {
     });
   }
 
-
  @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -80,13 +79,25 @@ Widget build(BuildContext context) {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(reward.rewardName!.toUpperCase(), style: Theme.of(context).textTheme.headline6),
+                          Text(
+                            reward.rewardName!.toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
                           Text(reward.rewardDescription!),
                           const SizedBox(height: 24),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Reward Information', style: Theme.of(context).textTheme.subtitle1),
+                              Text(
+                                'Reward Information',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 8),

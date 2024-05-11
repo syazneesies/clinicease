@@ -1,6 +1,8 @@
+import 'package:clinicease/screen/cart_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:clinicease/models/item_model.dart';
 import 'package:clinicease/services/item_service.dart';
-import 'package:flutter/material.dart';
+import 'package:clinicease/services/cart_service.dart';
 
 class ItemDetailScreen extends StatefulWidget {
   const ItemDetailScreen({Key? key, required this.itemId}) : super(key: key);
@@ -13,20 +15,21 @@ class ItemDetailScreen extends StatefulWidget {
 
 class _ItemDetailScreenState extends State<ItemDetailScreen> {
   late Future<ItemModel?> _itemDataFuture;
-  final ItemService _itemService = ItemService(); 
+  final ItemService _itemService = ItemService();
+  final CartService _cartService = CartService();
+  int _quantity = 1; 
+  int _maxQuantity = 10;
 
   @override
   void initState() {
     super.initState();
-
     onRefresh();
   }
 
   onRefresh() {
     setState(() {
-      _itemDataFuture = _itemService.getItemData(widget.itemId); 
+      _itemDataFuture = _itemService.getItemData(widget.itemId);
     });
- 
 
     _itemDataFuture.then((item) {
       if (item != null) {
@@ -37,6 +40,15 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     });
   }
 
+  void addToCart(ItemModel item, int quantity) {
+  _cartService.addItemToCart(item, quantity);
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CartPage(item: item), // Assuming your cart page is named CartPage
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -69,30 +81,79 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Card(
-                      elevation: 4, 
+                      elevation: 4,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10), 
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(item.itemName!.toUpperCase(), style: Theme.of(context).textTheme.headline6),
+                            Text(
+                              item.itemName!.toUpperCase(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
                             Text(item.itemDescription!),
                             const SizedBox(height: 24),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Item Information', style: Theme.of(context).textTheme.subtitle1),
+                                Text(
+                                  'Item Information',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            // Display service details here
-                            // Replace this with your actual service details widget
-                            // Below are placeholders, replace them with actual service details
-                            Text('Point Needed: ${item.itemPrice}'),
-                            // Add more widgets to display other service details
+                            Text('Item Price: ${item.itemPrice}'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Quantity:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.remove),
+                                      onPressed: () {
+                                        setState(() {
+                                          if (_quantity > 1) {
+                                            _quantity--;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    Text(
+                                      '$_quantity',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.add),
+                                      onPressed: () {
+                                        setState(() {
+                                          _quantity++;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -102,14 +163,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                     padding: const EdgeInsets.all(16),
                     child: ElevatedButton(
                       onPressed: () {
-                        print('id: ${item.itemId}');
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //   builder: (context) => ServiceConfirmationScreen(
-                        //     itemId: item.itemId!,
-                        //   ),
-                        // ));
+                        addToCart(item, _quantity);
                       },
-                      child: const Text('Book Now'),
+                      child: const Text('Add to cart'),
                     ),
                   ),
                 ],
@@ -122,5 +178,4 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       ),
     );
   }
-
 }

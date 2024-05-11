@@ -8,8 +8,8 @@ part of 'transaction_model.dart';
 
 TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
     TransactionModel(
-      receiptNumber: json['receiptNumber'] as int?,
-      transactionValue: json['transactionValue'] as int?,
+      receiptNumber: (json['receiptNumber'] as num?)?.toInt(),
+      transactionValue: (json['transactionValue'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>

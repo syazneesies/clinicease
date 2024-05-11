@@ -12,10 +12,10 @@ RewardModel _$RewardModelFromJson(Map<String, dynamic> json) => RewardModel(
       rewardDescription: json['rewardDescription'] as String?,
       rewardDate:
           const TimestampConverter().fromJson(json['rewardDate'] as Timestamp?),
-      rewardQuantity: json['rewardQuantity'] as int?,
+      rewardQuantity: (json['rewardQuantity'] as num?)?.toInt(),
       rewardPIC: json['rewardPIC'] as String?,
       rewardStatus: json['rewardStatus'] as String?,
-      rewardPoint: json['rewardPoint'] as int?,
+      rewardPoint: (json['rewardPoint'] as num?)?.toInt(),
       imageUrl: const ImageUrlConverter().fromJson(json['imageUrl']),
     );
 

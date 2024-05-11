@@ -12,6 +12,7 @@ class ItemModel {
   final String? itemQuantity;
   final String? itemStatus;
   final String? itemRemark;
+  int quantity;
 
   @ImageUrlConverter()
   final String? imageUrl;
@@ -26,6 +27,7 @@ class ItemModel {
     required this.itemStatus,
     required this.itemRemark,
     required this.imageUrl,
+    this.quantity = 0
   });
 
   factory ItemModel.fromJson(Map<String, dynamic> json)=> _$ItemModelFromJson(json);

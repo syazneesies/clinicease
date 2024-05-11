@@ -80,13 +80,25 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(service.serviceName!.toUpperCase(), style: Theme.of(context).textTheme.headline6),
+                            Text(
+                              service.serviceName!.toUpperCase(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
                             Text(service.serviceDescription!),
                             const SizedBox(height: 24),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Service Information', style: Theme.of(context).textTheme.subtitle1),
+                                Text(
+                                  'Service Information',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -124,5 +136,4 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
       ),
     );
   }
-
 }
