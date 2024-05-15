@@ -69,4 +69,22 @@ class CartService {
       };
     }).toList();
   }
+
+  static Future<DocumentSnapshot> fetchItemDetails(String itemId) async {
+    try {
+      // Fetch the document snapshot corresponding to the provided itemId
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('purchased_items').doc(itemId).get();
+      
+      // Check if the document exists
+      if (snapshot.exists) {
+        return snapshot;
+      } else {
+        throw Exception('Item with ID $itemId not found.');
+      }
+    } catch (error) {
+      // Handle any errors that occur during the fetch operation
+      print('Error fetching item details: $error');
+      throw Exception('Failed to fetch item details. Please try again later.');
+    }
+  }
 }

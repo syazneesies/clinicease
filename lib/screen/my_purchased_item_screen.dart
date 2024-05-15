@@ -1,5 +1,5 @@
-// my_purchased_reward_screen.dart
 import 'package:flutter/material.dart';
+import 'package:clinicease/screen/purchased_item_detail_screen.dart';
 import 'package:clinicease/services/cart_service.dart';
 import 'package:clinicease/services/storage_service.dart';
 
@@ -26,7 +26,7 @@ class _MyPurchasedItemScreenState extends State<MyPurchasedItemScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Purchased Rewards'),
+        title: const Text('My Purchased Items'),
       ),
       body: userId == null
           ? Center(child: Text('User not logged in'))
@@ -47,6 +47,14 @@ class _MyPurchasedItemScreenState extends State<MyPurchasedItemScreen> {
                         title: Text('Order ID: ${purchase['id']}'),
                         subtitle: Text('Date Purchased: ${purchase['date']}'),
                         trailing: Text('Total: \$${purchase['totalPrice'].toStringAsFixed(2)}'),
+                        onTap: () {
+                          // Pass the purchase item ID to the details screen
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => PurchaseDetailScreen(purchaseItemId: purchase['id']),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
