@@ -1,4 +1,5 @@
 import 'package:clinicease/helpers/image_json.dart';
+import 'package:clinicease/helpers/timestamp_json.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'item_model.g.dart';
 
@@ -7,13 +8,11 @@ class ItemModel {
   String? itemId;
   final String? itemName;
   final String? itemDescription;
-  final String? itemDate;
-  final String? itemPrice;
-  final String? itemQuantity;
+  final double? itemPrice;
+  final int? itemQuantity;
   final String? itemStatus;
   final String? itemRemark;
   int quantity;
-
   @ImageUrlConverter()
   final String? imageUrl;
 
@@ -21,7 +20,7 @@ class ItemModel {
     required this.itemId,
     required this.itemName,
     required this.itemDescription,
-    required this.itemDate,
+    //required this.itemDate,
     required this.itemQuantity,
     required this.itemPrice,
     required this.itemStatus,
