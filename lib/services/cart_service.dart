@@ -5,7 +5,7 @@ import 'package:clinicease/models/item_model.dart';
 
 class CartService {
   static const String _cartKey = 'cart';
-   final CollectionReference _ordersCollection = FirebaseFirestore.instance.collection('purchased_items');
+  final CollectionReference _ordersCollection = FirebaseFirestore.instance.collection('purchased_items');
 
   Future<List<ItemModel>> getCartItems() async {
     final prefs = await SharedPreferences.getInstance();
@@ -23,7 +23,7 @@ class CartService {
     final cartItems = await getCartItems();
     final existingItemIndex = cartItems.indexWhere((cartItem) => cartItem.itemId == item.itemId);
     if (existingItemIndex != -1) {
-      cartItems[existingItemIndex].quantity += quantity;
+      cartItems[existingItemIndex].quantity = (cartItems[existingItemIndex].quantity ?? 0) + quantity;
     } else {
       item.quantity = quantity;
       cartItems.add(item);
@@ -46,20 +46,22 @@ class CartService {
     await prefs.remove(_cartKey);
   }
 
-   Future<void> storeCartItemsInFirestore(List<ItemModel> cartItems,  String userId) async {
+  Future<String> storeCartItemsInFirestore(List<ItemModel> cartItems, String userId) async {
     CollectionReference orders = FirebaseFirestore.instance.collection('purchased_items');
 
     List<Map<String, dynamic>> items = cartItems.map((item) => item.toJson()).toList();
 
-    await orders.add({
-      'userId' : userId,
+    DocumentReference orderRef = await orders.add({
+      'userId': userId,
       'items': items,
       'totalPrice': items.fold(0.0, (sum, item) => sum + item['itemPrice'] * item['quantity']),
       'timestamp': FieldValue.serverTimestamp(),
     });
+
+    return orderRef.id;
   }
 
-    Future<List<Map<String, dynamic>>> getPurchaseHistory(String userId) async {
+  Future<List<Map<String, dynamic>>> getPurchaseHistory(String userId) async {
     QuerySnapshot snapshot = await _ordersCollection.where('userId', isEqualTo: userId).get();
     return snapshot.docs.map((doc) {
       return {
@@ -72,19 +74,27 @@ class CartService {
 
   static Future<DocumentSnapshot> fetchItemDetails(String itemId) async {
     try {
-      // Fetch the document snapshot corresponding to the provided itemId
       DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('purchased_items').doc(itemId).get();
-      
-      // Check if the document exists
+
       if (snapshot.exists) {
         return snapshot;
       } else {
         throw Exception('Item with ID $itemId not found.');
       }
     } catch (error) {
-      // Handle any errors that occur during the fetch operation
       print('Error fetching item details: $error');
       throw Exception('Failed to fetch item details. Please try again later.');
     }
   }
+
+  Future<void> updateItemQuantities(List<ItemModel> items) async {
+  for (var item in items) {
+    final itemRef = FirebaseFirestore.instance.collection('items').doc(item.itemId);
+    final doc = await itemRef.get();
+    if (doc.exists) {
+      final currentQuantity = doc.data()?['itemQuantity'] ?? 0; 
+      await itemRef.update({'itemQuantity': currentQuantity - item.quantity});
+    }
+  }
+}
 }

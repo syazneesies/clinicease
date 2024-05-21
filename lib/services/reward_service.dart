@@ -1,7 +1,6 @@
 import 'package:clinicease/models/purchased_reward_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clinicease/models/reward_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RewardService {
   final CollectionReference rewardCollection =
@@ -74,56 +73,51 @@ class RewardService {
   }
 }
 
-class BookedServiceService {
-  final CollectionReference _bookedServiceCollection =
-      FirebaseFirestore.instance.collection('purchased_rewards');
-
-  Future<List<PurchasedRewardModel>> getPurchasedReward() async {
-    List<PurchasedRewardModel> purchasedRewards = [];
-
-    try {
-      QuerySnapshot querySnapshot = await _bookedServiceCollection.get();
-      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        PurchasedRewardModel purchasedReward =
-            PurchasedRewardModel.fromJson(data);
-        purchasedReward.purchased_rewardId = doc.id;
-        purchasedRewards.add(purchasedReward);
-      }
-    } catch (e) {
-      print("Error getting booked services: $e");
-    }
-
-    return purchasedRewards;
-  }
-}
 
 class PurchasedRewardService {
-  final CollectionReference _purchasedRewardsCollection =
-      FirebaseFirestore.instance.collection('purchased_rewards');
-
-  // Current user ID
-  final String? userId = FirebaseAuth.instance.currentUser?.uid;
+  final CollectionReference _rewardCollection = FirebaseFirestore.instance.collection('purchased_rewards');
 
   Future<List<PurchasedRewardModel>> getPurchasedRewards() async {
-    List<PurchasedRewardModel> purchasedRewards = [];
-
+    List<PurchasedRewardModel> rewards = [];
     try {
-      QuerySnapshot querySnapshot = await _purchasedRewardsCollection
-          .where('userId', isEqualTo: userId) 
-          .get();
+      QuerySnapshot querySnapshot = await _rewardCollection.get();
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        PurchasedRewardModel purchasedReward =
-            PurchasedRewardModel.fromJson(data);
-        purchasedReward.purchased_rewardId = doc.id;
-        purchasedRewards.add(purchasedReward);
+        PurchasedRewardModel reward = PurchasedRewardModel.fromJson(data);
+        reward.purchased_rewardId = doc.id;
+        rewards.add(reward);
       }
     } catch (e) {
-      print("Error getting purchased Rewards: $e");
+      print("Error getting purchased rewards: $e");
     }
+    return rewards;
+  }
 
-    return purchasedRewards;
+  Future<void> updateRewardStatus(String rewardId, String status) async {
+    try {
+      await _rewardCollection.doc(rewardId).update({'rewardStatus': status});
+      print('Reward status updated to $status');
+    } catch (e) {
+      print("Error updating reward status: $e");
+      throw e;
+    }
+  }
+
+  Future<PurchasedRewardModel?> getRewardDetails(String rewardId) async {
+    try {
+      DocumentSnapshot documentSnapshot = await _rewardCollection.doc(rewardId).get();
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+        PurchasedRewardModel reward = PurchasedRewardModel.fromJson(data);
+        reward.purchased_rewardId = documentSnapshot.id;
+        return reward;
+      } else {
+        throw Exception('Reward not found');
+      }
+    } catch (e) {
+      print("Error fetching reward details: $e");
+      throw e;
+    }
   }
 }
 

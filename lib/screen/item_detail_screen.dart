@@ -112,7 +112,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               ],
                             ),
                             const SizedBox(height: 8),
-                            Text('Item Price: ${item.itemPrice}'),
+                            Text('Item Price: RM${item.itemPrice}'),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

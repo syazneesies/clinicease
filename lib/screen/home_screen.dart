@@ -80,10 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: double.infinity, 
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: const Color(0xFF6ABAE1), 
                 child: Row(
                   children: [
                     const Icon(
@@ -94,11 +92,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: AutoSizeText(
-                        '$greeting, ${user?.fullName ?? 'User'}',
+                        '$greeting, ${user?.fullName ?? 'User'}!',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFF202050),
                         ),
                         maxLines: 2,
                         minFontSize: 8,
@@ -205,36 +203,82 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
 class DisplayCardWidget extends StatelessWidget {
   final UserModel? user;
+
   const DisplayCardWidget({Key? key, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF6ABAE1),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Stack(
         children: [
-          const Text(
-            'My Rewards',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+          Container(
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            height: 120,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFDC830), Color(0xFFEAB23F)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.card_giftcard,
+                  size: 40,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'My Rewards',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Points: ${user?.rewardPoints ?? '-'}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Points: ${user?.rewardPoints ?? '-'}',  
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white,
+          Positioned(
+            bottom: 8,
+            right: 8,
+            child: Text(
+              'ClinicEase',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white.withOpacity(0.5),
+              ),
             ),
           ),
         ],
@@ -242,6 +286,8 @@ class DisplayCardWidget extends StatelessWidget {
     );
   }
 }
+
+
 
 class MenuCategoriesWidget extends StatelessWidget {
   const MenuCategoriesWidget({super.key});
@@ -251,7 +297,7 @@ class MenuCategoriesWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 1),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
@@ -259,20 +305,20 @@ class MenuCategoriesWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              fontFamily: 'PoppinsRegular', 
+              fontFamily: 'PoppinsRegular',
             ),
           ),
         ),
         const SizedBox(height: 16),
         GridView.count(
-          crossAxisCount: 2, 
+          crossAxisCount: 2,
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(), 
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             MenuCategoryCard(
               icon: Icons.calendar_today,
               label: 'Book Appointment',
-              backgroundColor: Colors.blue,
+              gradientColors: [const Color.fromARGB(255, 17, 83, 137), Colors.lightBlueAccent],
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -281,10 +327,10 @@ class MenuCategoriesWidget extends StatelessWidget {
                 );
               },
             ),
-           MenuCategoryCard(
+            MenuCategoryCard(
               icon: Icons.shopping_cart,
               label: 'Online Shop',
-              backgroundColor: Colors.green,
+              gradientColors: [Colors.green, Colors.lightGreenAccent],
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -296,7 +342,7 @@ class MenuCategoriesWidget extends StatelessWidget {
             MenuCategoryCard(
               icon: Icons.card_giftcard,
               label: 'Reward Shop',
-              backgroundColor: Colors.orange,
+              gradientColors: [Colors.orange, Colors.deepOrangeAccent],
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -308,7 +354,7 @@ class MenuCategoriesWidget extends StatelessWidget {
             MenuCategoryCard(
               icon: Icons.person,
               label: 'My Profile',
-              backgroundColor: Colors.purple,
+              gradientColors: [Colors.purple, Colors.deepPurpleAccent],
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -320,7 +366,7 @@ class MenuCategoriesWidget extends StatelessWidget {
             MenuCategoryCard(
               icon: Icons.add,
               label: 'Add Reward',
-              backgroundColor: Colors.pink,
+              gradientColors: [Color.fromARGB(255, 138, 19, 59), Colors.pinkAccent],
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -332,7 +378,7 @@ class MenuCategoriesWidget extends StatelessWidget {
             MenuCategoryCard(
               icon: Icons.call,
               label: 'Emergency',
-              backgroundColor: Colors.red,
+              gradientColors: [const Color.fromARGB(255, 172, 43, 34), Colors.redAccent],
               onTap: () async {
                 if (!await launchUrl(Uri.parse('tel:+60132152852'))) {
                   throw Exception('Could not launch URL');
@@ -349,81 +395,60 @@ class MenuCategoriesWidget extends StatelessWidget {
 class MenuCategoryCard extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Color backgroundColor;
+  final List<Color> gradientColors;
   final void Function()? onTap;
 
   const MenuCategoryCard({super.key, 
     required this.icon,
     required this.label,
-    required this.backgroundColor,
+    required this.gradientColors,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0, // Add elevation for a raised effect
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      color: backgroundColor,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 40,
-              color: Colors.white,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        margin: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 40,
+                color: Colors.white,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-
-
-class MenuCategoryItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const MenuCategoryItem({super.key, required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          size: 40,
-          color: const Color(0xFF202050),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'PoppinsRegular',
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-
-
- 
-

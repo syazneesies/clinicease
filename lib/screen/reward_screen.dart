@@ -1,4 +1,4 @@
-import 'package:clinicease/screen/reward_detail_screen.dart';
+import 'package:clinicease/screen/reward_confirmation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/reward_model.dart';
 import 'package:clinicease/services/reward_service.dart';
@@ -113,7 +113,7 @@ class RewardCardWidget extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => RewardDetailScreen(rewardId: reward.rewardId!),
+                          builder: (context) => RewardConfirmationScreen(rewardId: reward.rewardId!),
                         ));
                         // ScaffoldMessenger.of(context).showSnackBar(
                         //   SnackBar(

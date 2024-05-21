@@ -17,6 +17,7 @@ PurchasedRewardModel _$PurchasedRewardModelFromJson(
           const TimestampConverter().fromJson(json['rewardDate'] as Timestamp?),
       createdAt:
           const TimestampConverter().fromJson(json['createdAt'] as Timestamp?),
+      rewardStatus: json['rewardStatus'] as String?,
     )..purchased_rewardId = json['purchased_rewardId'] as String?;
 
 Map<String, dynamic> _$PurchasedRewardModelToJson(
@@ -29,4 +30,5 @@ Map<String, dynamic> _$PurchasedRewardModelToJson(
       'rewardDescription': instance.rewardDescription,
       'rewardDate': const TimestampConverter().toJson(instance.rewardDate),
       'createdAt': const TimestampConverter().toJson(instance.createdAt),
+      'rewardStatus': instance.rewardStatus,
     };

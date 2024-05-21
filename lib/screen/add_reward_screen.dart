@@ -110,18 +110,18 @@ void _showConfirmationPopup(int transactionValue) {
       content: Text('Would you like to redeem $transactionValue points?'),
       actions: [
         TextButton(
+          onPressed: () {
+            Navigator.pop(context); // Close the popup
+          },
+          child: Text('Cancel'),
+        ),
+        TextButton(
           onPressed: () async {
             // Implement the logic to redeem points and update reward points
             await _redeemPointsAndUpdate(transactionValue);
             Navigator.pop(context); // Close the popup
           },
           child: Text('Confirm'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context); // Close the popup
-          },
-          child: Text('Cancel'),
         ),
       ],
     ),

@@ -8,6 +8,7 @@ part of 'book_service_model.dart';
 
 BookedServiceModel _$BookedServiceModelFromJson(Map<String, dynamic> json) =>
     BookedServiceModel(
+      booked_serviceId: json['booked_serviceId'] as String?,
       serviceId: json['serviceId'] as String?,
       userId: json['userId'] as String?,
       fullName: json['fullName'] as String?,
@@ -17,7 +18,7 @@ BookedServiceModel _$BookedServiceModelFromJson(Map<String, dynamic> json) =>
       serviceTimes: const TimestampConverter()
           .fromJson(json['serviceTimes'] as Timestamp?),
       serviceName: json['serviceName'] as String?,
-    )..booked_serviceId = json['booked_serviceId'] as String?;
+    );
 
 Map<String, dynamic> _$BookedServiceModelToJson(BookedServiceModel instance) =>
     <String, dynamic>{

@@ -2,7 +2,7 @@ import 'package:clinicease/screen/service_confirmation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/service_model.dart';
 import 'package:clinicease/services/services_service.dart';
-//import 'package:clinicease/screen/edit_service_screen.dart'; // Import the edit service screen
+import 'package:intl/intl.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
   const ServiceDetailScreen({Key? key, required this.serviceId}) : super(key: key);
@@ -15,20 +15,18 @@ class ServiceDetailScreen extends StatefulWidget {
 
 class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
   late Future<ServiceModel?> _serviceDataFuture;
-  final ServiceService _serviceService = ServiceService(); 
+  final ServiceService _serviceService = ServiceService();
 
   @override
   void initState() {
     super.initState();
-
     onRefresh();
   }
 
   onRefresh() {
     setState(() {
-      _serviceDataFuture = _serviceService.getServiceData(widget.serviceId); 
+      _serviceDataFuture = _serviceService.getServiceData(widget.serviceId);
     });
- 
 
     _serviceDataFuture.then((service) {
       if (service != null) {
@@ -38,7 +36,6 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +75,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               service.serviceName!.toUpperCase(),
@@ -87,26 +84,28 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                 fontSize: 20,
                               ),
                             ),
-                            Text(service.serviceDescription!),
-                            const SizedBox(height: 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Service Information',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
+                            SizedBox(height: 8),
+                            Text(
+                              service.serviceDescription!,
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
-                            const SizedBox(height: 8),
-                            // Display service details here
-                            // Replace this with your actual service details widget
-                            // Below are placeholders, replace them with actual service details
-                            Text('Service Date: ${service.serviceDate.toString()}'),
-                            // Add more widgets to display other service details
+                            SizedBox(height: 24),
+                            // Display service details
+                            Text('Doctor In Charge: ${service.servicePIC}'),
+                            SizedBox(height: 8),
+                            Text('Available Slots: ${service.serviceQuantity}'),
+                            SizedBox(height: 8),
+                            Text('Available Time:'),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: service.serviceTimes!.map<Widget>((timeStamp) {
+                                // Format the timestamp into a readable string
+                                final formattedTime = DateFormat('h:mm a').format(timeStamp);
+                                return Text('- $formattedTime');
+                              }).toList(),
+                            ),
                           ],
                         ),
                       ),

@@ -1,5 +1,5 @@
-// cart_page.dart
 import 'package:clinicease/screen/home_screen.dart';
+import 'package:clinicease/screen/receipt_screen.dart';
 import 'package:clinicease/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicease/models/item_model.dart';
@@ -32,16 +32,26 @@ class _CartPageState extends State<CartPage> {
     });
   }
 
-    Future<void> _handlePayNow() async {
+  Future<void> _handlePayNow() async {
     final cartItems = await _cartService.getCartItems();
-    await _cartService.storeCartItemsInFirestore(cartItems,userId!);
+    await _cartService.storeCartItemsInFirestore(cartItems, userId!);
     await _cartService.clearCart();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Order placed successfully!')),
     );
     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ));
+      builder: (context) => HomeScreen(),
+    ));
+  }
+
+  Future<void> _handlePayAtCounter() async {
+    final cartItems = await _cartService.getCartItems();
+    final docId = await _cartService.storeCartItemsInFirestore(cartItems, userId!);
+    await _cartService.updateItemQuantities(cartItems);
+    await _cartService.clearCart();
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => ReceiptPage(items: cartItems, documentId: docId),
+    ));
   }
 
   @override
@@ -73,9 +83,9 @@ class _CartPageState extends State<CartPage> {
                       return ListTile(
                         leading: item.imageUrl != null
                             ? Image.network(item.imageUrl!)
-                            : Placeholder(), // Placeholder image or any default image
+                            : Placeholder(),
                         title: Text(item.itemName ?? 'Unknown'),
-                        subtitle: Text('Price: \$${item.itemPrice}'),
+                        subtitle: Text('Price: \RM${item.itemPrice}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -103,7 +113,7 @@ class _CartPageState extends State<CartPage> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '\$${totalPrice.toStringAsFixed(2)}',
+                        '\RM${totalPrice.toStringAsFixed(2)}',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -111,9 +121,16 @@ class _CartPageState extends State<CartPage> {
                 ),
                 SizedBox(
                   width: double.infinity,
-                    child: ElevatedButton(
+                  child: ElevatedButton(
                     onPressed: _handlePayNow,
                     child: Text('Pay Now'),
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _handlePayAtCounter,
+                    child: Text('Pay At Counter'),
                   ),
                 ),
               ],

@@ -212,7 +212,8 @@ Widget build(BuildContext context) {
                 'rewardDescription': reward!.rewardDescription,
                 'userId': userId, 
                 'rewardId': reward!.rewardId, 
-                'createdAt': FieldValue.serverTimestamp(), 
+                'createdAt': FieldValue.serverTimestamp(),
+                'rewardStatus' : "Unredemeed",
               };
 
               // Save purchase details and update reward quantity

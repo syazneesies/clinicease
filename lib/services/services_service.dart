@@ -105,5 +105,24 @@ class BookedServiceService {
 
     return bookedServices;
   }
+
+  Future<BookedServiceModel> getBookedServiceDetails(String bookingId) async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await _bookedServiceCollection.doc(bookingId).get();
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
+        BookedServiceModel bookedService = BookedServiceModel.fromJson(data);
+        bookedService.booked_serviceId = documentSnapshot.id;
+        return bookedService;
+      } else {
+        throw Exception('Booking not found');
+      }
+    } catch (e) {
+      print("Error fetching booked service details: $e");
+      throw e;
+    }
+  }
 }
 

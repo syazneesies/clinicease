@@ -17,6 +17,7 @@ class BookedServiceModel {
   final DateTime? serviceTimes;
 
   BookedServiceModel({
+    required this.booked_serviceId,
     required this.serviceId,
     required this.userId,
     required this.fullName,

@@ -37,36 +37,76 @@ class _ServiceScreenState extends State<ServiceScreen> {
             );
           } else {
             return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final service = snapshot.data![index];
-                return ListTile(
-                  leading: Image.network(
-                    service.imageUrl!,
-                    width: 50,
-                    height: 50,
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final service = snapshot.data![index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  title: Text(service.serviceName!),
-                   subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                   Text('Date: ${service.serviceDate != null ? DateFormat('dd-MM-yyyy').format(service.serviceDate!) : 'N/A'}'),
-                   Text('Available Slots: ${service.serviceQuantity}'),
-                    ],
-                  ),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      // print('Service ID: ${service.toJson()}');
-                      // print('Service ID: ${service.serviceId}');
+                  child: InkWell(
+                    onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => ServiceDetailScreen(serviceId: service.serviceId!),
                       ));
                     },
-                    child: const Text('Book Now'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 1, // Maintain square aspect ratio
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                              image: DecorationImage(
+                                image: NetworkImage(service.imageUrl!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                service.serviceName!,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Date: ${service.serviceDate != null ? DateFormat('dd-MM-yyyy').format(service.serviceDate!) : 'N/A'}',
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Available Slots: ${service.serviceQuantity}',
+                              ),
+                              SizedBox(height: 12),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Handle register button action
+                                  // This could navigate to a registration screen or perform any other action
+                                },
+                                child: Text('Register'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
-            );
+                ),
+              );
+            },
+          );
+
           }
         },
       ),
