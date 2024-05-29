@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:clinicease/models/book_service_model.dart';
 import 'package:clinicease/services/services_service.dart';
 import 'package:clinicease/helpers/date_time_utils.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class BookingDetailScreen extends StatefulWidget {
   final String bookingId;
@@ -87,6 +88,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     'Time: ${formatTime(booking.serviceTimes)}',
                     style: TextStyle(
                       fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Center(
+                    child: QrImageView(
+                      data: widget.bookingId,
+                      version: QrVersions.auto,
+                      size: 200.0,
                     ),
                   ),
                   SizedBox(height: 20),

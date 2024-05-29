@@ -27,7 +27,7 @@ class _PurchaseDetailScreenState extends State<PurchaseDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Purchase Detail'),
+        title: Text('Purchased Item Details'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: _purchaseItemFuture,
@@ -97,7 +97,6 @@ class _PurchaseDetailScreenState extends State<PurchaseDetailScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Description: ${item['itemDescription']}'),
                                 Text('Quantity: ${item['quantity']}'),
                                 Text('Price: \RM${(item['itemPrice'] * item['quantity']).toStringAsFixed(2)}'),
                               ],

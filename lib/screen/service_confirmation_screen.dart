@@ -152,21 +152,23 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
               ),
 
               const SizedBox(height: 20),
-              DropdownButtonFormField<DateTime>(
+              DropdownButtonFormField<String>(
               value: null,
               decoration: const InputDecoration(
                 labelText: 'Time',
                 border: OutlineInputBorder(),
               ),
               items: timeOptions.map((time) {
-                return DropdownMenuItem<DateTime>(
-                  value: time,
-                  child: Text(time.toString()), 
+                // Format each time option to display only the time part
+                String formattedTime = DateFormat('h:mm a').format(time);
+                return DropdownMenuItem<String>(
+                  value: formattedTime,
+                  child: Text(formattedTime), 
                 );
               }).toList(),
               onChanged: (selectedTime) {
                 setState(() {
-                  timeController.text = selectedTime!.toString();
+                  timeController.text = selectedTime!;
                 });
               },
             ),
@@ -230,8 +232,11 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
 
               // Show success message or handle success as needed
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Booking saved successfully')),
-              );
+              const SnackBar(
+                content: Text('Booking saved successfully'),
+                backgroundColor: Colors.green, // Customize the background color
+              ),
+            );
 
               // Pop the screen
               Navigator.of(context).pop();

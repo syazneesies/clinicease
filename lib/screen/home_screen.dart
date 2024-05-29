@@ -329,7 +329,7 @@ class MenuCategoriesWidget extends StatelessWidget {
             ),
             MenuCategoryCard(
               icon: Icons.shopping_cart,
-              label: 'Online Shop',
+              label: 'e-Medication Shop',
               gradientColors: [Colors.green, Colors.lightGreenAccent],
               onTap: () {
                 Navigator.of(context).push(

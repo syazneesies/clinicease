@@ -18,22 +18,32 @@ class ReceiptPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Receipt'),
+        title: const Text('Receipt Screen'),
+        automaticallyImplyLeading: false, // Remove back icon
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Text(
-                'Receipt',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 24,
                 ),
-              ),
+                SizedBox(width: 8),
+                Text(
+                  'Successfully reserved item!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 20),
             Text(
@@ -68,8 +78,6 @@ class ReceiptPage extends StatelessWidget {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (item.itemDescription != null)
-                            Text('Description: ${item.itemDescription}'),
                           Text('Quantity: ${item.quantity}'),
                           Text('Price: \RM${(item.itemPrice! * item.quantity!).toStringAsFixed(2)}'),
                         ],

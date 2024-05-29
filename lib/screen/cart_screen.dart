@@ -1,9 +1,10 @@
+import 'package:clinicease/services/cart_service.dart';
+import 'package:flutter/material.dart';
+import 'package:clinicease/models/item_model.dart';
 import 'package:clinicease/screen/home_screen.dart';
 import 'package:clinicease/screen/receipt_screen.dart';
 import 'package:clinicease/services/storage_service.dart';
-import 'package:flutter/material.dart';
-import 'package:clinicease/models/item_model.dart';
-import 'package:clinicease/services/cart_service.dart';
+import 'package:clinicease/screen/item_screen.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key, required this.item}) : super(key: key);
@@ -58,7 +59,7 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cart'),
+        title: const Text('Add to Cart'),
       ),
       body: FutureBuilder<List<ItemModel>>(
         future: _cartItemsFuture,
@@ -82,7 +83,14 @@ class _CartPageState extends State<CartPage> {
                       final item = cartItems[index];
                       return ListTile(
                         leading: item.imageUrl != null
-                            ? Image.network(item.imageUrl!)
+                            ? SizedBox(
+                                width: 60,
+                                height:100,
+                                child: Image.network(
+                                  item.imageUrl!,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
                             : Placeholder(),
                         title: Text(item.itemName ?? 'Unknown'),
                         subtitle: Text('Price: \RM${item.itemPrice}'),
@@ -117,13 +125,6 @@ class _CartPageState extends State<CartPage> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _handlePayNow,
-                    child: Text('Pay Now'),
                   ),
                 ),
                 SizedBox(

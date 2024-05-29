@@ -1,10 +1,7 @@
-import 'package:clinicease/models/item_model.dart';
-import 'package:clinicease/screen/cart_screen.dart';
-import 'package:clinicease/screen/item_detail_screen.dart';
-import 'package:clinicease/screen/my_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:clinicease/models/item_model.dart';
+import 'package:clinicease/screen/item_detail_screen.dart';
 import 'package:clinicease/services/item_service.dart';
-//import 'package:clinicease/screen/cart_page.dart';
 
 class ItemScreen extends StatefulWidget {
   const ItemScreen({Key? key}) : super(key: key);
@@ -15,48 +12,62 @@ class ItemScreen extends StatefulWidget {
 
 class _ItemScreenState extends State<ItemScreen> {
   final ItemService _itemService = ItemService();
+  late List<ItemModel> _items = [];
+  late List<ItemModel> _filteredItems = [];
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+    _fetchItems();
+  }
+
+  Future<void> _fetchItems() async {
+    final items = await _itemService.getItem();
+    setState(() {
+      _items = items;
+      _filteredItems = List.from(_items);
+    });
+  }
+
+  void _filterItems(String query) {
+    setState(() {
+      _filteredItems = _items
+          .where((item) => item.itemName!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Item List'),
-        actions: [
-          GestureDetector(
-            onTap: () {
-               // Replace ... with your item object
-              Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => MyProfileScreen(), // Navigate to your CartPage
-              ));
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Icon(Icons.shopping_cart), // Add your cart icon here
+        title: Text("e-Medication Shop"),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterItems,
+              decoration: InputDecoration(
+                hintText: 'Search by item name...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredItems.length,
+              itemBuilder: (context, index) {
+                final item = _filteredItems[index];
+                return ItemCardWidget(item: item);
+              },
             ),
           ),
         ],
-      ),
-      body: FutureBuilder(
-        future: _itemService.getItem(),
-        builder: (context, AsyncSnapshot<List<ItemModel>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final item = snapshot.data![index];
-                return ItemCardWidget(item: item);
-              },
-            );
-          }
-        },
       ),
     );
   }
@@ -109,7 +120,7 @@ class ItemCardWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Reward name
+                  // Item name
                   FittedBox(
                     fit: BoxFit.cover,
                     child: Text(
@@ -120,7 +131,7 @@ class ItemCardWidget extends StatelessWidget {
                   Text('RM ${item.itemPrice}'),
                   const SizedBox(height: 16),
 
-                  // Button
+                  // Buy Now Button
                   Align(
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
@@ -145,6 +156,71 @@ class ItemCardWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ItemSearchDelegate extends SearchDelegate<String> {
+  final List<ItemModel> items;
+  final Function(String) onSearch;
+
+  ItemSearchDelegate(this.items, this.onSearch);
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+          onSearch(query);
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return ListTile(
+          title: Text(item.itemName!),
+          onTap: () {
+            close(context, item.itemName!);
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestionList = query.isEmpty
+        ? items
+        : items.where((item) => item.itemName!.toLowerCase().contains(query.toLowerCase())).toList();
+    return ListView.builder(
+      itemCount: suggestionList.length,
+      itemBuilder: (context, index) {
+        final item = suggestionList[index];
+        return ListTile(
+          title: Text(item.itemName!),
+          onTap: () {
+            close(context, item.itemName!);
+          },
+        );
+      },
     );
   }
 }

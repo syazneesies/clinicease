@@ -56,6 +56,7 @@ class CartService {
       'items': items,
       'totalPrice': items.fold(0.0, (sum, item) => sum + item['itemPrice'] * item['quantity']),
       'timestamp': FieldValue.serverTimestamp(),
+      'transactionStatus': "Unpaid",
     });
 
     return orderRef.id;

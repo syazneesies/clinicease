@@ -18,7 +18,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Bookings'),
+        title: const Text('My Bookings History'),
       ),
       body: FutureBuilder<List<BookedServiceModel>>(
         future: _bookedServiceService.getBookedServices(),
@@ -49,9 +49,9 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Service: ${bookedService.serviceName ?? 'N/A'}'),
+                              Text('${bookedService.serviceName ?? 'N/A'}'),
                               Text('Date: ${formatDate(bookedService.serviceDate)}'),
-                              Text('Time: ${formatTime(bookedService.serviceTimes)}'),
+                              Text('Time: ${formatTimeAMPM(bookedService.serviceTimes)}'),
                             ],
                           ),
                           trailing: ElevatedButton(

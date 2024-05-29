@@ -5,7 +5,6 @@ import 'package:clinicease/screen/sign_up_screen.dart';
 import 'package:clinicease/services/auth_service.dart';
 import 'package:clinicease/services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Import statements remain the same
@@ -22,16 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    // Debugging
-    if (kDebugMode) {
-      _emailController.text = 'tester11@gmail.com';
-      _passwordController.text = 'tester123';
-    }
-    
-    super.initState();
-  }
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Image.asset("assets/loginbanner.jpg", height: 200),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: _emailController, // Link controller
+                  controller: _emailController,
                   decoration: const InputDecoration(
                     labelText: "Email Address",
                     prefixIcon: Icon(Icons.email),
@@ -67,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
-                  controller: _passwordController, // Link controller
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: "Password",
@@ -91,30 +81,32 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text("Forgot Password?"),
                 ),
                 const SizedBox(height: 20),
-                
-                
                 ElevatedButton(
-                  onPressed: () async {
+                  onPressed: _isLoading ? null : () async {
                     if (_formKey.currentState!.validate()) {
-                      // Sign in process
+                      setState(() {
+                        _isLoading = true;
+                      });
+
                       User? user = await _auth.signInWithEmailAndPassword(
                         _emailController.text.trim(),
                         _passwordController.text.trim(),
                       );
 
+                      setState(() {
+                        _isLoading = false;
+                      });
+
                       if (user != null) {
-                        // Get user ID
                         User? user = FirebaseAuth.instance.currentUser;
                         StorageService.setUID(user!.uid);
 
-                        // Get user data
                         await _auth.getUserData(user.uid).then((value) {
                           if (value != null) {
                             StorageService.setUserData(value);
                           }
                         });
 
-                        // Check if userData is successfully stored
                         UserModel? userData = StorageService.getUserData();
                         if (userData == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -125,15 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           return;
                         }
 
-                        // If userData is not null, navigate to home screen
-                        // Navigate to home screen after successful login
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => const HomeScreen()),
                         );
 
                       } else {
-                        // Show error message
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Invalid email or password')),
                         );
@@ -143,11 +132,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF202050), 
                   ),
-                  child: const Text("Login", style: TextStyle(color: Colors.white)),
+                  child: _isLoading
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(color: Colors.white),
+                        )
+                      : const Text("Login", style: TextStyle(color: Colors.white)),
                 ),
                 const SizedBox(height: 10),
-                
-                // Register button
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(

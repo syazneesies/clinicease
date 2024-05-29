@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:clinicease/screen/purchased_item_detail_screen.dart';
 import 'package:clinicease/services/cart_service.dart';
 import 'package:clinicease/services/storage_service.dart';
+import 'package:intl/intl.dart';
 
 class MyPurchasedItemScreen extends StatefulWidget {
   @override
@@ -20,6 +21,13 @@ class _MyPurchasedItemScreenState extends State<MyPurchasedItemScreen> {
     if (userId != null) {
       _purchaseHistoryFuture = _cartService.getPurchaseHistory(userId!);
     }
+  }
+
+  String formatDate(dynamic date) {
+    if (date is String) {
+      date = DateTime.parse(date);
+    }
+    return DateFormat('dd-MM-yyyy').format(date);
   }
 
   @override
@@ -43,18 +51,38 @@ class _MyPurchasedItemScreenState extends State<MyPurchasedItemScreen> {
                     itemCount: purchases.length,
                     itemBuilder: (context, index) {
                       final purchase = purchases[index];
-                      return ListTile(
-                        title: Text('Order ID: ${purchase['id']}'),
-                        subtitle: Text('Date Purchased: ${purchase['date']}'),
-                        trailing: Text('Total: RM${purchase['totalPrice'].toStringAsFixed(2)}'),
-                        onTap: () {
-                          // Pass the purchase item ID to the details screen
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PurchaseDetailScreen(purchaseItemId: purchase['id']),
-                            ),
-                          );
-                        },
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 4.0,
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                title: Text('Order ID: ${purchase['id']}'),
+                                subtitle: Text('Date Purchased: ${formatDate(purchase['date'])}'),
+                                trailing: Text('Total: RM${purchase['totalPrice'].toStringAsFixed(2)}'),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => PurchaseDetailScreen(purchaseItemId: purchase['id']),
+                                      ),
+                                    );
+                                  },
+                                  child: Text('View Details'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   );

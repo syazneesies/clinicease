@@ -17,11 +17,6 @@ class _RewardReceiptScreenState extends State<RewardReceiptScreen> {
   @override
   void initState() {
     super.initState();
-    _redeemReward();
-  }
-
-  Future<void> _redeemReward() async {
-    await _purchasedRewardService.updateRewardStatus(widget.rewardId, 'Redeemed');
   }
 
   @override
