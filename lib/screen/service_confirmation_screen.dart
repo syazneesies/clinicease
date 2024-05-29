@@ -218,6 +218,7 @@ class _ServiceConfirmationScreenState extends State<ServiceConfirmationScreen> {
               'userId': userId, // Assuming id is available in UserModel
               'serviceId': service!.serviceId, // Assuming serviceId is available in ServiceModel
               'createdAt': FieldValue.serverTimestamp(), // Include server timestamp for createdAt
+              'serviceStatus': 'booked',
             };
 
             // Print booking data to console

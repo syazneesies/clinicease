@@ -77,10 +77,12 @@ class RewardService {
 class PurchasedRewardService {
   final CollectionReference _rewardCollection = FirebaseFirestore.instance.collection('purchased_rewards');
 
-  Future<List<PurchasedRewardModel>> getPurchasedRewards() async {
+  Future<List<PurchasedRewardModel>> getPurchasedRewards(String userId) async {
     List<PurchasedRewardModel> rewards = [];
     try {
-      QuerySnapshot querySnapshot = await _rewardCollection.get();
+      QuerySnapshot querySnapshot = await _rewardCollection
+          .where('userId', isEqualTo: userId) 
+          .get();
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         PurchasedRewardModel reward = PurchasedRewardModel.fromJson(data);
